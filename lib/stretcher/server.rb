@@ -44,6 +44,28 @@ module Stretcher
       request(:get, path_uri)
       true
     end
+    
+    # Takes an array of msearch data as per
+    # http://www.elasticsearch.org/guide/reference/api/multi-search.html
+    # Should look something like:
+    # {"index" : "test"}
+    # {"query" : {"match_all" : {}}, "from" : 0, "size" : 10}
+    # {"index" : "test", "search_type" : "count"}
+    # {"query" : {"match_all" : {}}}
+    def msearch(body=[])
+      res = http.get(path_uri("/_msearch")) {|req|
+        req.body = body.map(&:to_json).join("\n")
+      }
+      SearchResults.new raw: res
+    end
+
+    # Retrieves multiple documents, possibly from multiple indexes
+    # as per: http://www.elasticsearch.org/guide/reference/api/multi-get.html
+    def mget(body={})
+      request(:get, path_uri("/_mget")) {|req|
+        req.body = body
+      }
+    end
 
     def path_uri(path="/")
       @uri.to_s + path.to_s
@@ -52,7 +74,7 @@ module Stretcher
     # Handy way to query the server, returning *only* the body
     # Will raise an exception when the status is not in the 2xx range
     def request(method, *args, &block)
-      logger.info("Stretcher: Issuing Request #{method}, #{args}")
+      logger.info("Stretcher: Issuing Request #{method.upcase}, #{args}")
       res = if block
               http.send(method, *args) do |req|
                 # Elastic search does mostly deal with JSON

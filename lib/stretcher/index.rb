@@ -41,9 +41,14 @@ module Stretcher
       @server.request :get, path_uri("/_stats")
     end
     
-    # Retrieve the mapping from the server
-    def mapping
+    # Retrieve the mapping for this index
+    def get_mapping
       @server.request :get, path_uri("/_mapping")
+    end
+    
+    # Retrieve settings for this index
+    def get_settings
+      @server.request :get, path_uri("/_settings")
     end
     
     # Check if the index has been created on the remote server
@@ -58,6 +63,17 @@ module Stretcher
         req.body = body
       end
       SearchResults.new raw: response
+    end
+    
+    # Searches a list of queries against only this index
+    # This deviates slightly from the official API in that *ONLY*
+    # queries are requried, the empty {} preceding them are not
+    # See: http://www.elasticsearch.org/guide/reference/api/multi-search.html
+    def msearch(queries=[])
+      @server.msearch queries.reduce([]) {|acc,q|
+        acc << {index: name}
+        acc << q
+      }
     end
 
     def path_uri(path="/")
