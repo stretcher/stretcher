@@ -10,15 +10,23 @@ module Stretcher
       @logger = options[:logger] || index.logger
     end
 
-    def get(id)
-      server.request(:get, path_uri("/#{id}"))
+    # Retrieves the document by ID
+    # Normally this returns the contents of _source, however, the 'raw' flag is passed in, it will return the full response hash
+    def get(id, raw=false)
+      res = server.request(:get, path_uri("/#{id}"))
+      raw ? res : res["_source"]
     end
-
+    
+    # Index an item with a specific ID
     def put(id, source)
       server.request(:put, path_uri("/#{id}"), source)
     end
     
-    def update(update, body)
+    # Uses the update api to modify a document with a script
+    # To update a doc with ID 987 for example:
+    # type.update(987, script: "ctx._source.message = 'Updated!'")
+    # See http://www.elasticsearch.org/guide/reference/api/update.html
+    def update(id, body)
       server.request(:post, path_uri("/#{id}/_update"), body)
     end
     
@@ -55,9 +63,10 @@ module Stretcher
       }
     end
     
-    # Check if this index type is defined
-    def exists?
-      server.http.head(path_uri).status != 404
+    # Check if this index type is defined, if passed an id
+    # this will check if the given document exists
+    def exists?(id=nil)
+      server.http.head(path_uri("/#{id}")).status != 404
     end
 
     def path_uri(path="/")
