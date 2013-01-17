@@ -19,8 +19,8 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency('faraday', '~> 0.8')
   gem.add_dependency('faraday_middleware', '~> 0.9.0')
+  gem.add_dependency('net-http-persistent', '~> 2.8')
   gem.add_dependency('hashie', '~> 1.2.0')   
-
 
   gem.add_development_dependency 'rspec', '>= 2.5.0'
   gem.add_development_dependency 'simplecov'

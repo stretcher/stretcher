@@ -1,5 +1,6 @@
 require 'logger'
 require 'hashie'
+require 'net/http/persistent'
 require 'faraday'
 require 'faraday_middleware'
 require "stretcher/version"
