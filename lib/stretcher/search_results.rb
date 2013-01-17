@@ -10,7 +10,9 @@ module Stretcher
       super
       self.total = raw.hits.total
       self.facets = raw.facets
-      self.results = raw.hits.hits.collect { |r| r['_source'] }
+      self.results = raw.hits.hits.collect {|r|
+        r['_source'].merge({"_id" => r['_id']})
+      }
     end
   end
 end
