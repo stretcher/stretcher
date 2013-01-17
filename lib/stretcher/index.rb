@@ -1,7 +1,7 @@
 require 'stretcher/search_results'
 module Stretcher
-  # Represents an Index context in elastic search
-  # Generally should be instantiated via Server#index(name)
+  # Represents an Index context in elastic search.
+  # Generally should be instantiated via Server#index(name).
   class Index
     attr_reader :server, :name, :logger
     
@@ -60,11 +60,11 @@ module Stretcher
     
     # Issues a search with the given query opts and body, both should be hashes
     # Ex: res = server.index('foo').search({size: 12}, {query: {match_all: {}}})
-    # es.class   # Stretcher::SearchResults
-    # res.total   # => 1
-    # res.facets  # => nil
-    # res.results # => [#<Hashie::Mash _id="123" text="Hello">]
-    # res.raw     # => #<Hashie::Mash ...> Raw JSON from the search
+    # * es.class   # Stretcher::SearchResults
+    # * res.total   # => 1
+    # * res.facets  # => nil
+    # * res.results # => [#<Hashie::Mash _id="123" text="Hello">]
+    # * res.raw     # => #<Hashie::Mash ...> Raw JSON from the search
     def search(query_opts={}, body=nil)
       uri = path_uri('/_search?' + Util.querify(query_opts))
       logger.info { "Stretcher Search: curl -XGET #{uri} -d '#{body.to_json}'" }

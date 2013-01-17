@@ -1,6 +1,6 @@
 module Stretcher
-  # Represents an index  scoped to a specific type
-  # Generally should be instantiated via Index#type(name)
+  # Represents an index  scoped to a specific type.
+  # Generally should be instantiated via Index#type(name).
   class IndexType
     attr_reader :server, :index, :name, :logger
     
