@@ -21,15 +21,23 @@ describe Stretcher::Index do
     index.bulk_index(corpus)
   end
   
-  it "should check existence properly" do
+  it "should work on an existential level" do
     index.delete rescue nil
     index.exists?.should be_false
     index.create
     index.exists?.should be_true
   end
 
+  it "should return stats without error" do
+    index.stats['_all'].should_not be_nil
+  end
+
   it "should put mappings for new types correctly" do
     create_tweet_mapping
+  end
+
+  it "should retrieve settings properly" do
+    index.get_settings['foo']['settings']['index.number_of_replicas'].should_not be_nil
   end
 
   it "should bulk index documents properly" do
