@@ -57,6 +57,13 @@ docs = [{"_type" => "tweet", "_id" => 91011, "text" => "Bulked"}]
 server.index('foo').bulk_index(docs)
 ```
 
+## Running Specs
+
+Running the specs requires an operational Elastic Search server on http://localhost:9200.
+The test suite is not to be trusted, don't count on your indexes staying around!
+
+Specs may be run with `rake spec`
+
 ## Contributing
 
 1. Fork it
