@@ -1,6 +1,8 @@
 # Stretcher
 
-A concise, fast,  ElasticSearch client designed to reflect the actual elastic search API as closely as possible, making minimal allowances for convenience.
+A concise, fast ElasticSearch client designed to reflect the actual elastic search API as closely as possible. Elastic search's API is complex, and mostly documented on the Elastic Search Guide. This client tries to stay out of your way more than others making advanced techniques easier to implement, and making debugging Elastic Search's sometimes cryptic errors easier.
+
+[Full RDocs](http://rdoc.info/github/PoseBiz/stretcher/master/frames)
 
 # Features
 
@@ -8,8 +10,8 @@ A concise, fast,  ElasticSearch client designed to reflect the actual elastic se
 * Efficiently re-uses connections on a per-server object basis (via net/http/persistent)
 * Supports efficient bulk indexing operations
 * Returns most responses in convenient Hashie::Mash form
-* Easily extensible
 * Configurable logging
+* Pure, threadsafe, ruby
 
 ## Installation
 
