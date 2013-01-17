@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = Stretcher::VERSION
   gem.authors       = ["Andrew Cholakian"]
   gem.email         = ["andrew@andrewvc.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{The elegant ElasticSearch client}
+  gem.summary       = %q{The elegant ElasticSearch client, supporting persistent connections, and a clean DSL}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($/)
