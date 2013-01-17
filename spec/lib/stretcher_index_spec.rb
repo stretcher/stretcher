@@ -39,6 +39,8 @@ describe Stretcher::Index do
   # TODO: Actually use two indexes
   it "should msearch across the index returning all docs" do
     seed_corpus
-    index.msearch.total.should == corpus.length
+    res = index.msearch([{query: {match_all: {}}}])
+    res.length.should == 1
+    res[0].class.should == Stretcher::SearchResults
   end
 end

@@ -62,7 +62,7 @@ module Stretcher
       response = @server.request(:get, uri) do |req|
         req.body = body
       end
-      SearchResults.new raw: response
+      SearchResults.new(raw: response)
     end
     
     # Searches a list of queries against only this index
@@ -70,10 +70,13 @@ module Stretcher
     # queries are requried, the empty {} preceding them are not
     # See: http://www.elasticsearch.org/guide/reference/api/multi-search.html
     def msearch(queries=[])
-      @server.msearch queries.reduce([]) {|acc,q|
+      raise ArgumentError, "msearch takes an array!" unless queries.is_a?(Array)
+      req_body = queries.reduce([]) {|acc,q|
         acc << {index: name}
         acc << q
+        acc
       }
+      @server.msearch req_body
     end
 
     def path_uri(path="/")

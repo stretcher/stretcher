@@ -53,10 +53,17 @@ module Stretcher
     # {"index" : "test", "search_type" : "count"}
     # {"query" : {"match_all" : {}}}
     def msearch(body=[])
-      res = http.get(path_uri("/_msearch")) {|req|
-        req.body = body.map(&:to_json).join("\n")
+      raise ArgumentError, "msearch takes an array!" unless body.is_a?(Array)
+      fmt_body = body.map(&:to_json).join("\n") + "\n"
+      logger.info { "Stretcher msearch: curl -XGET #{uri} -d '#{fmt_body}'" }
+      res = request(:get, path_uri("/_msearch")) {|req|
+        req.body = fmt_body
       }
-      SearchResults.new raw: res
+      
+      # Is this necessary?
+      raise RequestError.new(res), "Could not msearch" if res['error']
+      
+      res['responses'].map {|r| SearchResults.new(raw: r)}
     end
 
     # Retrieves multiple documents, possibly from multiple indexes
