@@ -2,8 +2,6 @@
 
 A concise, fast ElasticSearch client designed to reflect the actual elastic search API as closely as possible. Elastic search's API is complex, and mostly documented on the Elastic Search Guide. This client tries to stay out of your way more than others making advanced techniques easier to implement, and making debugging Elastic Search's sometimes cryptic errors easier.
 
-[Full RDocs](http://rdoc.info/github/PoseBiz/stretcher/master/frames)
-
 # Features
 
 * Cleanly matches up to elastic search's JSON api
@@ -17,7 +15,9 @@ A concise, fast ElasticSearch client designed to reflect the actual elastic sear
 
 Add this line to your application's Gemfile:
 
-    gem 'stretcher'
+```ruby
+gem 'stretcher'
+```
 
 ## Usage
 
@@ -27,15 +27,15 @@ Add this line to your application's Gemfile:
 # First Create a server
 server = Stretcher::Server.new('http://localhost:9200')
 # Delete an index (in case you already have this one)
-server.index('foo').delete rescue nil
+server.index(:foo).delete rescue nil
 # Create an index
-server.index('foo').create(mapping: {tweet: {properties: {text: 'string'}}})
+server.index(:foo).create(mapping: {tweet: {properties: {text: 'string'}}})
 # Add a document
-server.index('foo').type('tweet').put(123, {text: 'Hello'})
+server.index(:foo).type(:tweet).put(123, {text: 'Hello'})
 # Retrieve a document
-server.index('foo').type('tweet').get(123)
+server.index(:foo).type(:tweet).get(123)
 # Perform a search (Returns a Stretcher::SearchResults instance)
-res = server.index('foo').search({size: 12}, {query: {match_all: {}}})
+res = server.index(:foo).search({size: 12}, {query: {match_all: {}}})
 res.class   # Stretcher::SearchResults
 res.total   # => 1
 res.facets  # => nil
@@ -43,7 +43,7 @@ res.results # => [#<Hashie::Mash _id="123" text="Hello">]
 res.raw     # => #<Hashie::Mash ...> Raw JSON from the search
 ```
 
-### MultiSearch
+### Multi Search
     
 ```ruby
 server.index('foo').msearch([{query: {match_all: {}}}])
@@ -54,8 +54,12 @@ server.index('foo').msearch([{query: {match_all: {}}}])
     
 ```ruby
 docs = [{"_type" => "tweet", "_id" => 91011, "text" => "Bulked"}]
-server.index('foo').bulk_index(docs)
+server.index(:foo).bulk_index(docs)
 ```
+
+### Full Documentation
+
+This README documents only part of stretcher's API. The full documentation for stretcher is available in its [full rdocs](http://rdoc.info/github/PoseBiz/stretcher/master/frames).
 
 ## Running Specs
 
