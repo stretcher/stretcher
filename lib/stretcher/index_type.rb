@@ -11,14 +11,14 @@ module Stretcher
     end
 
     def get(id)
-      server.request(:get, path_uri(id))
+      server.request(:get, path_uri("/#{id}"))
     end
 
     def put(id, source)
-      server.request(:put, path_uri(id), source)
+      server.request(:put, path_uri("/#{id}"), source)
     end
     
-    def put(update, body)
+    def update(update, body)
       server.request(:post, path_uri("/#{id}/_update"), body)
     end
     
