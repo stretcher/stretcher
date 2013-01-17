@@ -1,9 +1,3 @@
-require 'logger'
-require 'hashie'
-require 'faraday'
-require 'faraday_middleware'
-require 'util'
-
 module Stretcher
   class Server
     attr_reader :uri, :http, :logger
