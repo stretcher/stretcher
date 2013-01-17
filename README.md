@@ -18,17 +18,19 @@ Add this line to your application's Gemfile:
     gem 'stretcher'
 
 ## Usage
-   
-    # First Create a server
-    server = Stretcher::Server.new('http://localhost:9200')
-    # Create an index
-    server.index('foo').create(mapping: {tweet: {properties: {text: 'string'}}})
-    # Add a document
-    server.index('foo').type('tweet').put(123, {text: 'Hello'})
-    # Retrieve a document
-    server.index('foo').type('tweet').get(123)
-    # Perform a search
-    server.index('foo').search({size: 12}, {query: {match_all: {}}})
+
+```ruby   
+# First Create a server
+server = Stretcher::Server.new('http://localhost:9200')
+# Create an index
+server.index('foo').create(mapping: {tweet: {properties: {text: 'string'}}})
+# Add a document
+server.index('foo').type('tweet').put(123, {text: 'Hello'})
+# Retrieve a document
+server.index('foo').type('tweet').get(123)
+# Perform a search
+server.index('foo').search({size: 12}, {query: {match_all: {}}})
+```
 
 ## Contributing
 
