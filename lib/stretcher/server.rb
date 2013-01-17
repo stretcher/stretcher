@@ -1,7 +1,10 @@
 module Stretcher
   class Server
     attr_reader :uri, :http, :logger
-
+    
+    # Represents an Server context in elastic search
+    # The options hash takes an optional instance of Logger under :logger
+    # Ex: server = Stretcher::Server.new('http://localhost:9200')
     def initialize(uri, options={})
       @uri = uri
 
