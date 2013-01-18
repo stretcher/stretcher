@@ -69,12 +69,12 @@ module Stretcher
     # http://www.elasticsearch.org/guide/reference/api/multi-search.html
     # Should look something like:
     #    data = [
-    #    {"index" : "test"}
-    #    {"query" : {"match_all" : {}}, "from" : 0, "size" : 10}
-    #    {"index" : "test", "search_type" : "count"}
-    #    {"query" : {"match_all" : {}}}
+    #      {"index" : "test"}
+    #      {"query" : {"match_all" : {}}, "from" : 0, "size" : 10}
+    #      {"index" : "test", "search_type" : "count"}
+    #      {"query" : {"match_all" : {}}}
     #    ]
-    # server.msearch(data)
+    #    server.msearch(data)
     def msearch(body=[])
       raise ArgumentError, "msearch takes an array!" unless body.is_a?(Array)
       fmt_body = body.map(&:to_json).join("\n") + "\n"
