@@ -7,6 +7,16 @@ describe Stretcher::Server do
     server.class.should == Stretcher::Server
   end
 
+  it "should support the block friendly 'with_server'" do
+    exposed = nil
+    res = Stretcher::Server.with_server() {|s|
+      exposed = s
+      :retval
+    }
+    res.should == :retval
+    exposed.class.should == Stretcher::Server
+  end
+
   it "should properly return that our server is up" do
     server.up?.should be_true
   end

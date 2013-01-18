@@ -1,12 +1,21 @@
 module Stretcher
   class Server
     attr_reader :uri, :http, :logger
+
+    # Instantiate a new instance in a manner convenient for using the block syntax.
+    # Can be used interchangably with +Stretcher::Server.new+ but will return the value
+    # of the block if present. See the regular constructor for full options.
+    def self.with_server(*args)
+      s = self.new(*args)
+      yield s
+    end
     
     # Represents a Server context in elastic search.
+    # Use +connect+ when you want to use the block syntax.
     # The options hash takes an optional instance of Logger under :logger.
     #
     # Ex: server = Stretcher::Server.new('http://localhost:9200').
-    def initialize(uri, options={})
+    def initialize(uri='http://localhost:9200', options={})
       @uri = uri
 
       @http = Faraday.new(:url => @uri) do |builder|        

@@ -46,12 +46,14 @@ res.raw     # => #<Hashie::Mash ...> Raw JSON from the search
 ### Block Syntax
 
 ```ruby
-# A nested block syntax is also supported
-Stretcher::Server.new('http://localhost:9200') {|srv|
-  server.index(:foo) {|idx|
-    idx.status
+# A nested block syntax is also supported.
+# with_server takes the same args as #new, but is amenable to blocks
+Stretcher::Server.with_server('http://localhost:9200') {|srv|
+  srv.index(:foo) {|idx|
+    idx.type(:bar) {|t| [t.exists?, t.get_mapping] }
   } 
 }
+# => [true, #<Hashie::Mash bar=...>]
 ```
 
 ### Multi Search
