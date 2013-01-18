@@ -63,7 +63,7 @@ Stretcher::Server.with_server('http://localhost:9200') {|srv|
 server.index(:foo).msearch([{query: {match_all: {}}}])
 # => Returns an array of Stretcher::SearchResults
 # Across multiple indexes
-server.msearch([{index: 'foo'}, {query: {match_all: {}}}])
+server.msearch([{index: :foo}, {query: {match_all: {}}}])
 # => Returns an array of Stretcher::SearchResults
 ```
 

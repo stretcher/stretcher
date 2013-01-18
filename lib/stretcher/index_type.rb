@@ -70,6 +70,7 @@ module Stretcher
       server.http.head(path_uri("/#{id}")).status != 404
     end
 
+    # Full path to this index type
     def path_uri(path="/")
       index.path_uri("/#{name}") + path.to_s
     end

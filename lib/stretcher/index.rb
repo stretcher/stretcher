@@ -15,17 +15,17 @@ module Stretcher
     # Optionally takes a block, which will be passed a single arg with the Index obj
     # The block syntax returns the evaluated value of the block
     # 
-    # Examples:
-    #
-    # my_index.index(:foo) # => #<Stretcher::Index ...>
-    #
-    # my_index.index(:foo) {|idx| 1+1} # => 2
+    #    my_index.index(:foo) # => #<Stretcher::Index ...>
+    #    my_index.index(:foo) {|idx| 1+1} # => 2
     def type(name, &block)
       t = IndexType.new(self, name)
       block ? block.call(t) : t
     end
     
     # Given a hash of documents, will bulk index
+    #
+    #    docs = [{"_type" => "tweet", "_id" => 91011, "text" => "Bulked"}]
+    #    server.index(:foo).bulk_index(docs)
     def bulk_index(documents)
       @server.bulk documents.reduce("") {|post_data, d_raw|
         d = Hashie::Mash.new(d_raw)
@@ -69,12 +69,13 @@ module Stretcher
     end
     
     # Issues a search with the given query opts and body, both should be hashes
-    # Ex: res = server.index('foo').search({size: 12}, {query: {match_all: {}}})
-    # * es.class   # Stretcher::SearchResults
-    # * res.total   # => 1
-    # * res.facets  # => nil
-    # * res.results # => [#<Hashie::Mash _id="123" text="Hello">]
-    # * res.raw     # => #<Hashie::Mash ...> Raw JSON from the search
+    #
+    #    res = server.index('foo').search({size: 12}, {query: {match_all: {}}})
+    #    es.class   # Stretcher::SearchResults
+    #    res.total   # => 1
+    #    res.facets  # => nil
+    #    res.results # => [#<Hashie::Mash _id="123" text="Hello">]
+    #    res.raw     # => #<Hashie::Mash ...> Raw JSON from the search
     def search(query_opts={}, body=nil)
       uri = path_uri('/_search?' + Util.querify(query_opts))
       logger.info { "Stretcher Search: curl -XGET #{uri} -d '#{body.to_json}'" }
@@ -88,6 +89,9 @@ module Stretcher
     # This deviates slightly from the official API in that *ONLY*
     # queries are requried, the empty {} preceding them are not
     # See: http://www.elasticsearch.org/guide/reference/api/multi-search.html
+    #
+    #    server.index(:foo).msearch([{query: {match_all: {}}}])
+    #    # => Returns an array of Stretcher::SearchResults
     def msearch(queries=[])
       raise ArgumentError, "msearch takes an array!" unless queries.is_a?(Array)
       req_body = queries.reduce([]) {|acc,q|
@@ -98,6 +102,7 @@ module Stretcher
       @server.msearch req_body
     end
 
+    # Full path to this index
     def path_uri(path="/")
       @server.path_uri("/#{name}") + path.to_s
     end

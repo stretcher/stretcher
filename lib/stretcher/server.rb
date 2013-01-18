@@ -11,10 +11,10 @@ module Stretcher
     end
     
     # Represents a Server context in elastic search.
-    # Use +connect+ when you want to use the block syntax.
+    # Use +with_server+ when you want to use the block syntax.
     # The options hash takes an optional instance of Logger under :logger.
     #
-    # Ex: server = Stretcher::Server.new('http://localhost:9200').
+    #    server = Stretcher::Server.new('http://localhost:9200')
     def initialize(uri='http://localhost:9200', options={})
       @uri = uri
 
@@ -46,11 +46,8 @@ module Stretcher
     # Optionally takes a block, which will be passed a single arg with the Index obj
     # The block syntax returns the evaluated value of the block
     # 
-    # Examples:
-    #
-    # my_server.index(:foo) # => #<Stretcher::Index ...>
-    #
-    # my_server.index(:foo) {|idx| 1+1} # => 2
+    #    my_server.index(:foo) # => #<Stretcher::Index ...>
+    #    my_server.index(:foo) {|idx| 1+1} # => 2
     def index(name, &block)
       idx = Index.new(self, name, logger: logger)
       block ? block.call(idx) : idx
@@ -71,10 +68,11 @@ module Stretcher
     # Takes an array of msearch data as per
     # http://www.elasticsearch.org/guide/reference/api/multi-search.html
     # Should look something like:
-    # {"index" : "test"}
-    # {"query" : {"match_all" : {}}, "from" : 0, "size" : 10}
-    # {"index" : "test", "search_type" : "count"}
-    # {"query" : {"match_all" : {}}}
+    #
+    #    {"index" : "test"}
+    #    {"query" : {"match_all" : {}}, "from" : 0, "size" : 10}
+    #    {"index" : "test", "search_type" : "count"}
+    #    {"query" : {"match_all" : {}}}
     def msearch(body=[])
       raise ArgumentError, "msearch takes an array!" unless body.is_a?(Array)
       fmt_body = body.map(&:to_json).join("\n") + "\n"
@@ -97,6 +95,7 @@ module Stretcher
       }
     end
 
+    # Full path to the server root dir
     def path_uri(path="/")
       @uri.to_s + path.to_s
     end
@@ -109,7 +108,7 @@ module Stretcher
               http.send(method, *args) do |req|
                 # Elastic search does mostly deal with JSON
                 req.headers["Content-Type"] = 'application/json'
-                block.call(req)
+i                block.call(req)
                end
             else
               http.send(method, *args)
