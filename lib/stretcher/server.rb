@@ -33,8 +33,18 @@ module Stretcher
       end
     end
 
-    def index(name)
-      Index.new(self, name, logger: logger)
+    # Returns a Stretcher::Index object for the index +name+.
+    # Optionally takes a block, which will be passed a single arg with the Index obj
+    # The block syntax returns the evaluated value of the block
+    # 
+    # Examples:
+    #
+    # my_server.index(:foo) # => #<Stretcher::Index ...>
+    #
+    # my_server.index(:foo) {|idx| 1+1} # => 2
+    def index(name, &block)
+      idx = Index.new(self, name, logger: logger)
+      block ? block.call(idx) : idx
     end
 
     def bulk(data)

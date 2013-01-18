@@ -43,10 +43,25 @@ res.results # => [#<Hashie::Mash _id="123" text="Hello">]
 res.raw     # => #<Hashie::Mash ...> Raw JSON from the search
 ```
 
+### Block Syntax
+
+```ruby
+# A nested block syntax is also supported
+Stretcher::Server.new('http://localhost:9200') {|srv|
+  server.index(:foo) {|idx|
+    idx.status
+  } 
+}
+```
+
 ### Multi Search
     
 ```ruby
-server.index('foo').msearch([{query: {match_all: {}}}])
+# Within a single index
+server.index(:foo).msearch([{query: {match_all: {}}}])
+# => Returns an array of Stretcher::SearchResults
+# Across multiple indexes
+server.msearch([{index: 'foo'}, {query: {match_all: {}}}])
 # => Returns an array of Stretcher::SearchResults
 ```
 

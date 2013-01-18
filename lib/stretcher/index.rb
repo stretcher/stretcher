@@ -11,8 +11,18 @@ module Stretcher
       @logger = options[:logger] || server.logger
     end
 
-    def type(name)
-      IndexType.new(self, name)
+    # Returns a Stretcher::IndexType object for the type +name+.
+    # Optionally takes a block, which will be passed a single arg with the Index obj
+    # The block syntax returns the evaluated value of the block
+    # 
+    # Examples:
+    #
+    # my_index.index(:foo) # => #<Stretcher::Index ...>
+    #
+    # my_index.index(:foo) {|idx| 1+1} # => 2
+    def type(name, &block)
+      t = IndexType.new(self, name)
+      block ? block.call(t) : t
     end
     
     # Given a hash of documents, will bulk index

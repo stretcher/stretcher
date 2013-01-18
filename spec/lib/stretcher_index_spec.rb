@@ -28,6 +28,16 @@ describe Stretcher::Index do
     index.exists?.should be_true
   end
 
+  it "should support block syntax for types" do
+    exposed = nil
+    res = index.type(:foo) {|t|
+      exposed = t
+      :retval
+    }
+    res.should == :retval
+    exposed.class.should == Stretcher::IndexType
+  end
+
   it "should return stats without error" do
     index.stats['_all'].should_not be_nil
   end

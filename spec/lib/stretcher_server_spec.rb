@@ -14,4 +14,14 @@ describe Stretcher::Server do
   it "should beget an index object cleanly" do
     server.index('foo').class.should == Stretcher::Index
   end
+
+  it "should support block syntax for indexes" do
+    exposed = nil
+    res = server.index(:foo) {|i|
+      exposed = i
+      :retval
+    }
+    res.should == :retval
+    exposed.class.should == Stretcher::Index
+  end
 end
