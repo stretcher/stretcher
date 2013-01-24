@@ -29,7 +29,7 @@ module Stretcher
     def bulk_index(documents)
       @server.bulk documents.reduce("") {|post_data, d_raw|
         d = Hashie::Mash.new(d_raw)
-        action_meta = {"index" => {"_index" => name, "_type" => d["_type"], "_id" => d["id"]}}
+        action_meta = {"index" => {"_index" => name, "_type" => d["_type"], "_id" => d["_id"] || d["id"]}}
         action_meta["index"]["_parent"] = d["_parent"] if d["_parent"]
         post_data << (action_meta.to_json + "\n")
         post_data << (d.to_json + "\n")

@@ -5,9 +5,9 @@ describe Stretcher::Index do
   let(:index) { server.index('foo') }
   let(:corpus) {
     [
-     {text: "Foo", "_type" => 'tweet'},
-     {text: "Bar", "_type" => 'tweet'},
-     {text: "Baz", "_type" => 'tweet'}
+     {text: "Foo", "_type" => 'tweet', "_id" => 'fooid'},
+     {text: "Bar", "_type" => 'tweet', "_id" => 'barid'},
+     {text: "Baz", "_type" => 'tweet', "id" => 'bazid'} # Note we support both _id and id
     ]
   }
 
@@ -52,6 +52,9 @@ describe Stretcher::Index do
 
   it "should bulk index documents properly" do
     seed_corpus
+    corpus.each {|doc|
+      index.type(doc["_type"]).get(doc["_id"] || doc["id"]).text.should == doc[:text]
+    }
   end
 
   # TODO: Actually use two indexes

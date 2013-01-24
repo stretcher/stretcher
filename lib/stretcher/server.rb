@@ -110,8 +110,8 @@ module Stretcher
               http.send(method, *args) do |req|
                 # Elastic search does mostly deal with JSON
                 req.headers["Content-Type"] = 'application/json'
-i                block.call(req)
-               end
+                block.call(req)
+              end
             else
               http.send(method, *args)
             end
