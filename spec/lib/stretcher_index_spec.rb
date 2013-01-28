@@ -64,4 +64,10 @@ describe Stretcher::Index do
     res.length.should == 1
     res[0].class.should == Stretcher::SearchResults
   end
+
+  it "should raise an exception when msearching a non-existant index" do
+    lambda {
+      res = server.index(:does_not_exist).msearch([{query: {match_all: {}}}])
+    }.should raise_exception(Stretcher::RequestError)
+  end
 end

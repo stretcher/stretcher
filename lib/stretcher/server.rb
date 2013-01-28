@@ -83,8 +83,10 @@ module Stretcher
         req.body = fmt_body
       }
       
-      # Is this necessary?
-      raise RequestError.new(res), "Could not msearch" if res['error']
+      errors = res.responses.select {|r| r[:error]}.map(&:error)
+      if !errors.empty?
+        raise RequestError.new(res), "Could not msearch #{errors.inspect}" 
+      end
       
       res['responses'].map {|r| SearchResults.new(raw: r)}
     end
