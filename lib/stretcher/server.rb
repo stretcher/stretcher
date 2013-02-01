@@ -58,6 +58,16 @@ module Stretcher
         req.body = data
       end
     end
+
+    # Retrieves stats for this server
+    def stats
+      request :get, path_uri("/_stats")
+    end
+
+    # Retrieves status for this server
+    def status
+      request :get, path_uri("/_status")
+    end
     
     # Returns true if the server is currently reachable, raises an error otherwise
     def up?

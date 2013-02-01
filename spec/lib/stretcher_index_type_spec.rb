@@ -14,6 +14,20 @@ describe Stretcher::Index do
     type.get_mapping.should == mapping
   end
 
+  describe "searching" do
+    before do
+      @doc = {message: "hello"}
+    end
+
+    it "should search and find the right doc" do
+      match_text = 'hello'
+      type.put(123123, @doc)
+      sleep 1
+      res = type.search({}, {query: {match: {message: match_text}}})
+      res.results.first.message.should == @doc[:message]
+    end
+  end
+
   describe "put/get" do
     before do
       @doc = {message: "hello!"}

@@ -48,9 +48,14 @@ module Stretcher
       @server.request :delete, path_uri
     end
 
-    # Retrieves stats from the server
+    # Retrieves stats for this index
     def stats
       @server.request :get, path_uri("/_stats")
+    end
+    
+    # Retrieves status for this index
+    def status
+      @server.request :get, path_uri("/_status")      
     end
     
     # Retrieve the mapping for this index

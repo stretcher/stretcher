@@ -70,6 +70,11 @@ module Stretcher
       server.http.head(path_uri("/#{id}")).status != 404
     end
 
+    # Issues an Index#search scoped to this type
+    def search(query_opts={}, body=nil)
+      @index.search(query_opts.merge(type: name), body)
+    end
+
     # Full path to this index type
     def path_uri(path="/")
       index.path_uri("/#{name}") + path.to_s

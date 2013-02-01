@@ -20,6 +20,14 @@ describe Stretcher::Server do
   it "should properly return that our server is up" do
     server.up?.should be_true
   end
+
+  it "should check the stats w/o error" do
+    server.stats
+  end
+
+  it "should check the status w/o error" do
+    server.status.ok.should be_true
+  end
   
   it "should beget an index object cleanly" do
     server.index('foo').class.should == Stretcher::Index

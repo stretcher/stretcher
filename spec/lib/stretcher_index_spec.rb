@@ -42,6 +42,10 @@ describe Stretcher::Index do
     index.stats['_all'].should_not be_nil
   end
 
+  it "should return the status without error" do
+    index.status['ok'].should be_true
+  end
+
   it "should put mappings for new types correctly" do
     create_tweet_mapping
   end
@@ -55,6 +59,14 @@ describe Stretcher::Index do
     corpus.each {|doc|
       index.type(doc["_type"]).get(doc["_id"] || doc["id"]).text.should == doc[:text]
     }
+  end
+
+  it "should search without error" do
+    seed_corpus
+    match_text = corpus.first[:text]
+    sleep 1 # ES needs time to update!
+    res = index.search({}, {query: {match: {text: match_text}}})
+    res.results.first.text.should == match_text
   end
 
   # TODO: Actually use two indexes
