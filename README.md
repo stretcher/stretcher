@@ -29,7 +29,7 @@ server = Stretcher::Server.new('http://localhost:9200')
 # Delete an index (in case you already have this one)
 server.index(:foo).delete rescue nil
 # Create an index
-server.index(:foo).create(mappings: {tweet: {properties: {text: 'string'}}})
+server.index(:foo).create(mappings: {tweet: {properties: {text: {type: 'string'}}}})
 # Add a document
 server.index(:foo).type(:tweet).put(123, {text: 'Hello'})
 # Retrieve a document
