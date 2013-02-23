@@ -29,17 +29,18 @@ server = Stretcher::Server.new('http://localhost:9200')
 # Delete an index (in case you already have this one)
 server.index(:foo).delete rescue nil
 # Create an index
-server.index(:foo).create(mappings: {tweet: {properties: {text: 'string'}}})
-# Add a document
-server.index(:foo).type(:tweet).put(123, {text: 'Hello'})
+server.index(:foo).create(mappings: {tweet: {properties: {text: {type: 'string'}}}})
+# Add some documents
+30.times {|t| server.index(:foo).type(:tweet).put(t, {text: "Hello #{t}"}) }
 # Retrieve a document
-server.index(:foo).type(:tweet).get(123)
+server.index(:foo).type(:tweet).get(3)
+# => #<Hashie::Mash text="Hello 3">
 # Perform a search (Returns a Stretcher::SearchResults instance)
-res = server.index(:foo).search({size: 12}, {query: {match_all: {}}})
+res = server.index(:foo).search(size: 12, query: {match_all: {}})
 res.class   # Stretcher::SearchResults
-res.total   # => 1
+res.total   # => 30
+res.results # => [#<Hashie::Mash _id="4" text="Hello 4">, ...]
 res.facets  # => nil
-res.results # => [#<Hashie::Mash _id="123" text="Hello">]
 res.raw     # => #<Hashie::Mash ...> Raw JSON from the search
 ```
 
@@ -50,10 +51,10 @@ res.raw     # => #<Hashie::Mash ...> Raw JSON from the search
 # with_server takes the same args as #new, but is amenable to blocks
 Stretcher::Server.with_server('http://localhost:9200') {|srv|
   srv.index(:foo) {|idx|
-    idx.type(:bar) {|t| [t.exists?, t.get_mapping] }
+    idx.type(:tweet) {|t| {exists: t.exists?, mapping: t.get_mapping} }
   } 
 }
-# => [true, #<Hashie::Mash bar=...>]
+# => {:exists=>true, :mapping=>#<Hashie::Mash tweet=...>}
 ```
 
 ### Multi Search

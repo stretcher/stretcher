@@ -81,10 +81,18 @@ module Stretcher
     #    res.facets  # => nil
     #    res.results # => [#<Hashie::Mash _id="123" text="Hello">]
     #    res.raw     # => #<Hashie::Mash ...> Raw JSON from the search
-    def search(query_opts={}, body=nil)
-      uri = path_uri('/_search?' + Util.querify(query_opts))
-      logger.info { "Stretcher Search: curl -XGET #{uri} -d '#{body.to_json}'" }
-      response = @server.request(:get, uri) do |req|
+    def search(generic_opts={}, explicit_body=nil)
+      uri_str = '/_search'
+      body = nil
+      if explicit_body
+        uri_str << '?' + Util.querify(generic_opts)
+        body = explicit_body
+      else
+        body = generic_opts
+      end
+      
+      logger.info { "Stretcher Search: curl -XGET '#{uri}' -d '#{body.to_json}'" }
+      response = @server.request(:get, path_uri(uri_str)) do |req|
         req.body = body
       end
       SearchResults.new(raw: response)
