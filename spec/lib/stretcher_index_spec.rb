@@ -77,6 +77,11 @@ describe Stretcher::Index do
     res[0].class.should == Stretcher::SearchResults
   end
 
+  it "execute the analysis API and return an expected result" do
+    analyzed = index.analyze("Candles", analyzer: :snowball)
+    analyzed.tokens.first.token.should == 'candl'
+  end
+
   it "should raise an exception when msearching a non-existant index" do
     lambda {
       res = server.index(:does_not_exist).msearch([{query: {match_all: {}}}])

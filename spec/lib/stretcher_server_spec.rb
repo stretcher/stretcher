@@ -42,4 +42,9 @@ describe Stretcher::Server do
     res.should == :retval
     exposed.class.should == Stretcher::Index
   end
+
+  it "execute the analysis API and return an expected result" do
+    analyzed = server.analyze("Candles", analyzer: :snowball)
+    analyzed.tokens.first.token.should == 'candl'
+  end
 end

@@ -115,6 +115,16 @@ module Stretcher
       @server.msearch req_body
     end
 
+    # Implements the Analyze API
+    # EX: 
+    #    index.analyze("Candles", analyzer: :snowball)
+    #    # => #<Hashie::Mash tokens=[#<Hashie::Mash end_offset=7 position=1 start_offset=0 token="candl" type="<ALPHANUM>">]>
+    def analyze(text, analysis_params)
+      @server.request(:get, path_uri("/_analyze"), analysis_params) do |req|
+        req.body = text
+      end
+    end
+
     # Full path to this index
     def path_uri(path="/")
       @server.path_uri("/#{name}") + path.to_s

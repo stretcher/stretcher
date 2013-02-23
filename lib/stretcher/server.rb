@@ -108,12 +108,23 @@ module Stretcher
         req.body = body
       }
     end
+    
+    # Implements the Analyze API
+    # EX: 
+    #    server.analyze("Candles", analyzer: :snowball)
+    #    # => #<Hashie::Mash tokens=[#<Hashie::Mash end_offset=7 position=1 start_offset=0 token="candl" type="<ALPHANUM>">]>
+    # as per: http://www.elasticsearch.org/guide/reference/api/admin-indices-analyze.html
+    def analyze(text, analysis_params)
+      request(:get, path_uri("/_analyze"), analysis_params) do |req|
+        req.body = text
+      end
+    end
 
     # Full path to the server root dir
     def path_uri(path="/")
       @uri.to_s + path.to_s
     end
-    
+
     # Handy way to query the server, returning *only* the body
     # Will raise an exception when the status is not in the 2xx range
     def request(method, *args, &block)
