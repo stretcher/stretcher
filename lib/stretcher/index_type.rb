@@ -71,6 +71,7 @@ module Stretcher
     end
 
     # Issues an Index#search scoped to this type
+    # See Index#search for more details
     def search(generic_opts={}, body=nil)
       @index.search(generic_opts.merge(type: name), body)
     end

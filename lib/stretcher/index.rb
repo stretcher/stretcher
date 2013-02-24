@@ -75,7 +75,7 @@ module Stretcher
     
     # Issues a search with the given query opts and body, both should be hashes
     #
-    #    res = server.index('foo').search({size: 12}, {query: {match_all: {}}})
+    #    res = server.index('foo').search(size: 12, {query: {match_all: {}}})
     #    es.class   # Stretcher::SearchResults
     #    res.total   # => 1
     #    res.facets  # => nil
