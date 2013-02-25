@@ -1,7 +1,9 @@
 require 'spec_helper'
 
 describe Stretcher::Index do
-  let(:server) { Stretcher::Server.new(ES_URL) }
+  let(:server) {
+    Stretcher::Server.new(ES_URL, logger: DEBUG_LOGGER)
+  }
   let(:index) { server.index('foo') }
   let(:corpus) {
     [

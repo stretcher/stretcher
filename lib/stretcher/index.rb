@@ -91,7 +91,7 @@ module Stretcher
         body = generic_opts
       end
       
-      logger.info { "Stretcher Search: curl -XGET '#{uri}' -d '#{body.to_json}'" }
+      logger.info { "Stretcher Search: curl -XGET '#{uri_str}' -d '#{body.to_json}'" }
       response = @server.request(:get, path_uri(uri_str)) do |req|
         req.body = body
       end
