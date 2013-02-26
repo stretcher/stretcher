@@ -2,19 +2,19 @@ require 'spec_helper'
 
 describe Stretcher::Index do
   let(:server) {
-    Stretcher::Server.new(ES_URL, logger: DEBUG_LOGGER)
+    Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER)
   }
   let(:index) { server.index('foo') }
   let(:corpus) {
     [
-     {text: "Foo", "_type" => 'tweet', "_id" => 'fooid'},
-     {text: "Bar", "_type" => 'tweet', "_id" => 'barid'},
-     {text: "Baz", "_type" => 'tweet', "id" => 'bazid'} # Note we support both _id and id
+     {:text => "Foo", "_type" => 'tweet', "_id" => 'fooid'},
+     {:text => "Bar", "_type" => 'tweet', "_id" => 'barid'},
+     {:text => "Baz", "_type" => 'tweet', "id" => 'bazid'} # Note we support both _id and id
     ]
   }
 
   def create_tweet_mapping
-    mdata = {tweet:{properties: {text: {type: :string}}}}
+    mdata = {:tweet => {:properties => {:text => {:type => :string}}}}
     index.type('tweet').put_mapping(mdata)
   end
 
@@ -22,7 +22,7 @@ describe Stretcher::Index do
     create_tweet_mapping
     index.bulk_index(corpus)
   end
-  
+
   it "should work on an existential level" do
     index.delete rescue nil
     index.exists?.should be_false
@@ -67,26 +67,26 @@ describe Stretcher::Index do
     seed_corpus
     match_text = corpus.first[:text]
     sleep 1 # ES needs time to update!
-    res = index.search({}, {query: {match: {text: match_text}}})
+    res = index.search({}, {:query => {:match => {:text => match_text}}})
     res.results.first.text.should == match_text
   end
 
   # TODO: Actually use two indexes
   it "should msearch across the index returning all docs" do
     seed_corpus
-    res = index.msearch([{query: {match_all: {}}}])
+    res = index.msearch([{:query => {:match_all => {}}}])
     res.length.should == 1
     res[0].class.should == Stretcher::SearchResults
   end
 
   it "execute the analysis API and return an expected result" do
-    analyzed = index.analyze("Candles", analyzer: :snowball)
+    analyzed = index.analyze("Candles", :analyzer => :snowball)
     analyzed.tokens.first.token.should == 'candl'
   end
 
   it "should raise an exception when msearching a non-existant index" do
     lambda {
-      res = server.index(:does_not_exist).msearch([{query: {match_all: {}}}])
+      res = server.index(:does_not_exist).msearch([{:query => {:match_all => {}}}])
     }.should raise_exception(Stretcher::RequestError)
   end
 end

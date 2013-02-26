@@ -9,7 +9,7 @@ module Stretcher
       s = self.new(*args)
       yield s
     end
-    
+
     # Represents a Server context in elastic search.
     # Use +with_server+ when you want to use the block syntax.
     # The options hash takes an optional instance of Logger under :logger.
@@ -18,25 +18,25 @@ module Stretcher
     def initialize(uri='http://localhost:9200', options={})
       @uri = uri
 
-      @http = Faraday.new(:url => @uri) do |builder|        
+      @http = Faraday.new(:url => @uri) do |builder|
         builder.response :mashify
         builder.response :json, :content_type => /\bjson$/
-        
+
         builder.request :json
-        
+
         builder.adapter :net_http_persistent
-        
+
         builder.options[:read_timeout] = 4
         builder.options[:open_timeout] = 2
       end
-      
+
       if options[:logger]
         @logger = options[:logger]
       else
         @logger = Logger.new(STDOUT)
         @logger.level = Logger::WARN
       end
-      
+
       @logger.formatter = proc do |severity, datetime, progname, msg|
         "[Stretcher][#{severity}]: #{msg}\n"
       end
@@ -45,11 +45,11 @@ module Stretcher
     # Returns a Stretcher::Index object for the index +name+.
     # Optionally takes a block, which will be passed a single arg with the Index obj
     # The block syntax returns the evaluated value of the block
-    # 
+    #
     #    my_server.index(:foo) # => #<Stretcher::Index ...>
     #    my_server.index(:foo) {|idx| 1+1} # => 2
     def index(name, &block)
-      idx = Index.new(self, name, logger: logger)
+      idx = Index.new(self, name, :logger => logger)
       block ? block.call(idx) : idx
     end
 
@@ -68,13 +68,13 @@ module Stretcher
     def status
       request :get, path_uri("/_status")
     end
-    
+
     # Returns true if the server is currently reachable, raises an error otherwise
     def up?
       request(:get, path_uri)
       true
     end
-    
+
     # Takes an array of msearch data as per
     # http://www.elasticsearch.org/guide/reference/api/multi-search.html
     # Should look something like:
@@ -92,13 +92,13 @@ module Stretcher
       res = request(:get, path_uri("/_msearch")) {|req|
         req.body = fmt_body
       }
-      
+
       errors = res.responses.select {|r| r[:error]}.map(&:error)
       if !errors.empty?
-        raise RequestError.new(res), "Could not msearch #{errors.inspect}" 
+        raise RequestError.new(res), "Could not msearch #{errors.inspect}"
       end
-      
-      res['responses'].map {|r| SearchResults.new(raw: r)}
+
+      res['responses'].map {|r| SearchResults.new(:raw => r)}
     end
 
     # Retrieves multiple documents, possibly from multiple indexes
@@ -108,9 +108,9 @@ module Stretcher
         req.body = body
       }
     end
-    
+
     # Implements the Analyze API
-    # EX: 
+    # EX:
     #    server.analyze("Candles", analyzer: :snowball)
     #    # => #<Hashie::Mash tokens=[#<Hashie::Mash end_offset=7 position=1 start_offset=0 token="candl" type="<ALPHANUM>">]>
     # as per: http://www.elasticsearch.org/guide/reference/api/admin-indices-analyze.html
@@ -128,7 +128,7 @@ module Stretcher
     # Handy way to query the server, returning *only* the body
     # Will raise an exception when the status is not in the 2xx range
     def request(method, *args, &block)
-      logger.info { "Stretcher: Issuing Request #{method.upcase}, #{args}" }
+      logger.info { "Stretcher: Issuing Request #{method.to_s.upcase}, #{args}" }
       res = if block
               http.send(method, *args) do |req|
                 # Elastic search does mostly deal with JSON
