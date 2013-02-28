@@ -19,7 +19,7 @@ module Stretcher
       self.total = raw.hits.total
       self.facets = raw.facets
       self.results = raw.hits.hits.collect {|r|
-        r['_source'].merge({"_id" => r['_id']})
+        (r.has_key?('_source') ? r['_source'] : r['fields']).merge({"_id" => r['_id']})
       }
     end
   end
