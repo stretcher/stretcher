@@ -26,6 +26,11 @@ describe Stretcher::Index do
       res = type.search({}, {query: {match: {message: match_text}}})
       res.results.first.message.should == @doc[:message]
     end
+
+    it "should build results when _source is not included in loaded fields" do
+      res = type.search({}, {query: {match_all: {}}, fields: ['message']})
+      res.results.first.message.should == @doc[:message]
+    end
   end
 
   describe "put/get" do
