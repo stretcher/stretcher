@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Stretcher::Server do
   let(:server) { Stretcher::Server.new(ES_URL) }
-  
+
   it "should initialize cleanly" do
     server.class.should == Stretcher::Server
   end
@@ -28,7 +28,7 @@ describe Stretcher::Server do
   it "should check the status w/o error" do
     server.status.ok.should be_true
   end
-  
+
   it "should beget an index object cleanly" do
     server.index('foo').class.should == Stretcher::Index
   end
@@ -44,7 +44,7 @@ describe Stretcher::Server do
   end
 
   it "execute the analysis API and return an expected result" do
-    analyzed = server.analyze("Candles", analyzer: :snowball)
+    analyzed = server.analyze("Candles", :analyzer => :snowball)
     analyzed.tokens.first.token.should == 'candl'
   end
 end

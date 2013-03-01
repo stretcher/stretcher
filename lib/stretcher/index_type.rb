@@ -3,7 +3,7 @@ module Stretcher
   # Generally should be instantiated via Index#type(name).
   class IndexType
     attr_reader :server, :index, :name, :logger
-    
+
     def initialize(index, name, options={})
       @index = index
       @server = index.server
@@ -17,12 +17,12 @@ module Stretcher
       res = server.request(:get, path_uri("/#{id}"))
       raw ? res : res["_source"]
     end
-    
+
     # Index an item with a specific ID
     def put(id, source)
       server.request(:put, path_uri("/#{id}"), source)
     end
-    
+
     # Uses the update api to modify a document with a script
     # To update a doc with ID 987 for example:
     # type.update(987, script: "ctx._source.message = 'Updated!'")
@@ -30,11 +30,11 @@ module Stretcher
     def update(id, body)
       server.request(:post, path_uri("/#{id}/_update"), body)
     end
-    
+
     # Deletes the document with the given ID
     def delete(id)
       res = server.http.delete path_uri("/#{id}")
-      
+
       # Since 404s are just not a problem here, let's simply return false
       if res.status == 404
         false
@@ -49,7 +49,7 @@ module Stretcher
     def get_mapping
       @server.request :get, path_uri("/_mapping")
     end
-    
+
     # Delete the mapping for this type. Note this will delete
     # All documents of this type as well
     # http://www.elasticsearch.org/guide/reference/api/admin-indices-delete-mapping.html
@@ -63,7 +63,7 @@ module Stretcher
         req.body = body
       }
     end
-    
+
     # Check if this index type is defined, if passed an id
     # this will check if the given document exists
     def exists?(id=nil)
@@ -73,7 +73,7 @@ module Stretcher
     # Issues an Index#search scoped to this type
     # See Index#search for more details
     def search(generic_opts={}, body=nil)
-      @index.search(generic_opts.merge(type: name), body)
+      @index.search(generic_opts.merge(:type => name), body)
     end
 
     # Full path to this index type
