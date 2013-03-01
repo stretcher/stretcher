@@ -4,7 +4,7 @@ module Stretcher
   # Generally should be instantiated via Server#index(name).
   class Index
     attr_reader :server, :name, :logger
-    
+
     def initialize(server, name, options={})
       @server = server
       @name = name
@@ -14,14 +14,14 @@ module Stretcher
     # Returns a Stretcher::IndexType object for the type +name+.
     # Optionally takes a block, which will be passed a single arg with the Index obj
     # The block syntax returns the evaluated value of the block
-    # 
+    #
     #    my_index.index(:foo) # => #<Stretcher::Index ...>
     #    my_index.index(:foo) {|idx| 1+1} # => 2
     def type(name, &block)
       t = IndexType.new(self, name)
       block ? block.call(t) : t
     end
-    
+
     # Given a hash of documents, will bulk index
     #
     #    docs = [{"_type" => "tweet", "_id" => 91011, "text" => "Bulked"}]
@@ -42,7 +42,7 @@ module Stretcher
         req.body = options
       end
     end
-    
+
     # Deletes the index
     def delete
       @server.request :delete, path_uri
@@ -52,27 +52,27 @@ module Stretcher
     def stats
       @server.request :get, path_uri("/_stats")
     end
-    
+
     # Retrieves status for this index
     def status
-      @server.request :get, path_uri("/_status")      
+      @server.request :get, path_uri("/_status")
     end
-    
+
     # Retrieve the mapping for this index
     def get_mapping
       @server.request :get, path_uri("/_mapping")
     end
-    
+
     # Retrieve settings for this index
     def get_settings
       @server.request :get, path_uri("/_settings")
     end
-    
+
     # Check if the index has been created on the remote server
     def exists?
       @server.http.head(path_uri).status != 404
     end
-    
+
     # Issues a search with the given query opts and body, both should be hashes
     #
     #    res = server.index('foo').search(size: 12, {query: {match_all: {}}})
@@ -90,14 +90,14 @@ module Stretcher
       else
         body = generic_opts
       end
-      
+
       logger.info { "Stretcher Search: curl -XGET '#{uri_str}' -d '#{body.to_json}'" }
       response = @server.request(:get, path_uri(uri_str)) do |req|
         req.body = body
       end
-      SearchResults.new(raw: response)
+      SearchResults.new(:raw => response)
     end
-    
+
     # Searches a list of queries against only this index
     # This deviates slightly from the official API in that *ONLY*
     # queries are requried, the empty {} preceding them are not
@@ -108,7 +108,7 @@ module Stretcher
     def msearch(queries=[])
       raise ArgumentError, "msearch takes an array!" unless queries.is_a?(Array)
       req_body = queries.reduce([]) {|acc,q|
-        acc << {index: name}
+        acc << {:index => name}
         acc << q
         acc
       }
@@ -116,7 +116,7 @@ module Stretcher
     end
 
     # Implements the Analyze API
-    # EX: 
+    # EX:
     #    index.analyze("Candles", analyzer: :snowball)
     #    # => #<Hashie::Mash tokens=[#<Hashie::Mash end_offset=7 position=1 start_offset=0 token="candl" type="<ALPHANUM>">]>
     def analyze(text, analysis_params)
