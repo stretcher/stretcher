@@ -2,7 +2,7 @@ require 'stretcher/search_results'
 module Stretcher
   # Represents an Index context in elastic search.
   # Generally should be instantiated via Server#index(name).
-  class Index
+  class Index < EsComponent
     attr_reader :server, :name, :logger
 
     def initialize(server, name, options={})
@@ -82,20 +82,8 @@ module Stretcher
     #    res.results # => [#<Hashie::Mash _id="123" text="Hello">]
     #    res.raw     # => #<Hashie::Mash ...> Raw JSON from the search
     def search(generic_opts={}, explicit_body=nil)
-      uri_str = '/_search'
-      body = nil
-      if explicit_body
-        uri_str << '?' + Util.querify(generic_opts)
-        body = explicit_body
-      else
-        body = generic_opts
-      end
-
-      logger.info { "Stretcher Search: curl -XGET '#{uri_str}' -d '#{body.to_json}'" }
-      response = @server.request(:get, path_uri(uri_str)) do |req|
-        req.body = body
-      end
-      SearchResults.new(:raw => response)
+      # Written this way to be more RDoc friendly
+      do_search(generic_opts, explicit_body)
     end
 
     # Searches a list of queries against only this index

@@ -1,5 +1,5 @@
 module Stretcher
-  class Server
+  class Server < EsComponent
     attr_reader :uri, :http, :logger
 
     # Instantiate a new instance in a manner convenient for using the block syntax.

@@ -1,7 +1,7 @@
 module Stretcher
   # Represents an index  scoped to a specific type.
   # Generally should be instantiated via Index#type(name).
-  class IndexType
+  class IndexType < EsComponent
     attr_reader :server, :index, :name, :logger
 
     def initialize(index, name, options={})
@@ -72,8 +72,9 @@ module Stretcher
 
     # Issues an Index#search scoped to this type
     # See Index#search for more details
-    def search(generic_opts={}, body=nil)
-      @index.search(generic_opts.merge(:type => name), body)
+    def search(generic_opts={}, explicit_body=nil)
+      # Written this way to be more RDoc friendly
+      do_search(generic_opts, explicit_body)
     end
 
     # Full path to this index type
