@@ -66,7 +66,7 @@ describe Stretcher::Index do
   it "should search without error" do
     seed_corpus
     match_text = corpus.first[:text]
-    sleep 1 # ES needs time to update!
+    index.refresh
     res = index.search({}, {:query => {:match => {:text => match_text}}})
     res.results.first.text.should == match_text
   end

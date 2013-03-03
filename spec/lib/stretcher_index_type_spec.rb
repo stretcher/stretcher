@@ -22,7 +22,7 @@ describe Stretcher::Index do
     it "should search and find the right doc" do
       match_text = 'hello'
       type.put(123123, @doc)
-      sleep 1
+      index.refresh
       res = type.search({}, {:query => {:match => {:message => match_text}}})
       res.results.first.message.should == @doc[:message]
     end

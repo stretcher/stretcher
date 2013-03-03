@@ -119,6 +119,11 @@ module Stretcher
         req.body = text
       end
     end
+    
+    # Perform a refresh, making all indexed documents available
+    def refresh
+      do_refresh
+    end
 
     # Full path to the server root dir
     def path_uri(path="/")

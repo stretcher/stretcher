@@ -29,6 +29,10 @@ describe Stretcher::Server do
     server.status.ok.should be_true
   end
 
+  it "should refresh w/o error" do
+    server.refresh.ok.should be_true
+  end
+
   it "should beget an index object cleanly" do
     server.index('foo').class.should == Stretcher::Index
   end

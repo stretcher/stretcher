@@ -47,19 +47,19 @@ module Stretcher
 
     # Retrieve the mapping for this type
     def get_mapping
-      @server.request :get, path_uri("/_mapping")
+      request :get, path_uri("/_mapping")
     end
 
     # Delete the mapping for this type. Note this will delete
     # All documents of this type as well
     # http://www.elasticsearch.org/guide/reference/api/admin-indices-delete-mapping.html
     def delete_mapping
-      @server.request :delete, path_uri("/_mapping")
+      request :delete, path_uri("/_mapping")
     end
 
     # Alter the mapping for this type
     def put_mapping(body)
-      @server.request(:put, path_uri("/_mapping")) {|req|
+      request(:put, path_uri("/_mapping")) {|req|
         req.body = body
       }
     end

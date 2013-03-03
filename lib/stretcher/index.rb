@@ -38,34 +38,34 @@ module Stretcher
 
     # Creates the index, with the supplied hash as the optinos body (usually mappings: and settings:))
     def create(options={})
-      @server.request(:put, path_uri) do |req|
+      request(:put, path_uri) do |req|
         req.body = options
       end
     end
 
     # Deletes the index
     def delete
-      @server.request :delete, path_uri
+      request :delete, path_uri
     end
 
     # Retrieves stats for this index
     def stats
-      @server.request :get, path_uri("/_stats")
+      request :get, path_uri("/_stats")
     end
 
     # Retrieves status for this index
     def status
-      @server.request :get, path_uri("/_status")
+      request :get, path_uri("/_status")
     end
 
     # Retrieve the mapping for this index
     def get_mapping
-      @server.request :get, path_uri("/_mapping")
+      request :get, path_uri("/_mapping")
     end
 
     # Retrieve settings for this index
     def get_settings
-      @server.request :get, path_uri("/_settings")
+      request :get, path_uri("/_settings")
     end
 
     # Check if the index has been created on the remote server
@@ -108,9 +108,14 @@ module Stretcher
     #    index.analyze("Candles", analyzer: :snowball)
     #    # => #<Hashie::Mash tokens=[#<Hashie::Mash end_offset=7 position=1 start_offset=0 token="candl" type="<ALPHANUM>">]>
     def analyze(text, analysis_params)
-      @server.request(:get, path_uri("/_analyze"), analysis_params) do |req|
+      request(:get, path_uri("/_analyze"), analysis_params) do |req|
         req.body = text
       end
+    end
+    
+    # Perform a refresh making all items in this index available instantly
+    def refresh
+      do_refresh
     end
 
     # Full path to this index
