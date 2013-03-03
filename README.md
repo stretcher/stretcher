@@ -91,6 +91,13 @@ The test suite is not to be trusted, don't count on your indexes staying around!
 
 Specs may be run with `rake spec`
 
+## Contributors
+
+* @andrewvc
+* @psynix
+* @fmardini
+* @chatgris
+
 ## Contributing
 
 1. Fork it
