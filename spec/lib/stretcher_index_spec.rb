@@ -15,7 +15,7 @@ describe Stretcher::Index do
 
   def create_tweet_mapping
     mdata = {:tweet => {:properties => {:text => {:type => :string}}}}
-    index.type('tweet').put_mapping(mdata)
+    index.type(:tweet).put_mapping(mdata)
   end
 
   def seed_corpus

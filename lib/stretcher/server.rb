@@ -132,16 +132,16 @@ module Stretcher
 
     # Handy way to query the server, returning *only* the body
     # Will raise an exception when the status is not in the 2xx range
-    def request(method, *args, &block)
+    def request(method, url=nil, *args, &block)
       logger.info { "Stretcher: Issuing Request #{method.to_s.upcase}, #{args}" }
       res = if block
-              http.send(method, *args) do |req|
+              http.send(method, url, *args) do |req|
                 # Elastic search does mostly deal with JSON
                 req.headers["Content-Type"] = 'application/json'
                 block.call(req)
               end
             else
-              http.send(method, *args)
+              http.send(method, url, *args)
             end
 
       if res.status >= 200 && res.status <= 299
