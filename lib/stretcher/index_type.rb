@@ -77,8 +77,8 @@ module Stretcher
 
     # Full path to this index type
     def path_uri(path=nil)
-      path = "/#{path}" if path
-      index.path_uri("#{name}/#{path}")
+      p = index.path_uri(name)
+      path ? p << "/#{path}" : p
     end
   end
 end

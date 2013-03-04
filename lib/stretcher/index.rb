@@ -125,7 +125,8 @@ module Stretcher
 
     # Full path to this index
     def path_uri(path="/")
-      @server.path_uri("/#{name}/#{path}")
+      p = @server.path_uri("/#{name}")
+      path ? p << "/#{path}" : p
     end
   end
 end

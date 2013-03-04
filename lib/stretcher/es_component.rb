@@ -8,17 +8,17 @@ module Stretcher
     private
     
     def do_search(generic_opts={}, explicit_body=nil)
-      uri_str = '_search'
+      query_opts = {}
       body = nil
       if explicit_body
-        uri_str << '?' + Util.querify(generic_opts)
+        query_opts = generic_opts
         body = explicit_body
       else
         body = generic_opts
       end
 
-      logger.info { "Stretcher Search: curl -XGET '#{uri_str}' -d '#{body.to_json}'" }
-      response = request(:get, uri_str) do |req|
+      logger.info { "Stretcher Search: curl -XGET '#{Util.qurl(path_uri('_search'), query_opts)}' -d '#{body.to_json}'" }
+      response = request(:get, "_search", query_opts) do |req|
         req.body = body
       end
       SearchResults.new(:raw => response)      
@@ -28,10 +28,10 @@ module Stretcher
       request(:post, "_refresh")
     end
 
-    def request(method, url=nil, *args, &block)
-      prefixed_url = path_uri() + "/#{url}"
+    def request(method, path=nil, query_opts=nil, *args, &block)
+      prefixed_path = path_uri(path)
       raise "Cannot issue request, no server specified!" unless @server
-      @server.request(method, prefixed_url, *args, &block)
+      @server.request(method, prefixed_path, query_opts, *args, &block)
     end
   end
 end

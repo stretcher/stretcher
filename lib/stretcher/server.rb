@@ -126,22 +126,22 @@ module Stretcher
     end
 
     # Full path to the server root dir
-    def path_uri(path="/")
+    def path_uri(path=nil)
       @uri.to_s + path.to_s
     end
 
     # Handy way to query the server, returning *only* the body
     # Will raise an exception when the status is not in the 2xx range
-    def request(method, url=nil, *args, &block)
-      logger.info { "Stretcher: Issuing Request #{method.to_s.upcase}, #{args}" }
+    def request(method, url=nil, query_opts=nil, *args, &block)
+      logger.info { "Stretcher: Issuing Request #{method.to_s.upcase}, #{Util.qurl(url,query_opts)}" }
       res = if block
-              http.send(method, url, *args) do |req|
+              http.send(method, url, query_opts, *args) do |req|
                 # Elastic search does mostly deal with JSON
                 req.headers["Content-Type"] = 'application/json'
                 block.call(req)
               end
             else
-              http.send(method, url, *args)
+              http.send(method, url, query_opts, *args)
             end
 
       if res.status >= 200 && res.status <= 299
