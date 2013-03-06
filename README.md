@@ -97,6 +97,7 @@ Specs may be run with `rake spec`
 * @psynix
 * @fmardini
 * @chatgris
+* @alpinegizmo
 
 ## Contributing
 
