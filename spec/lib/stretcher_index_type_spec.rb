@@ -17,13 +17,12 @@ describe Stretcher::Index do
   describe "searching" do
     before do
       @doc = {:message => "hello"}
+      type.put(123123, @doc)
+      index.refresh
     end
 
     it "should search and find the right doc" do
-      match_text = 'hello'
-      type.put(123123, @doc)
-      index.refresh
-      res = type.search({}, {:query => {:match => {:message => match_text}}})
+      res = type.search({}, {:query => {:match => {:message => @doc[:message]}}})
       res.results.first.message.should == @doc[:message]
     end
 
