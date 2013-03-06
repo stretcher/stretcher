@@ -74,7 +74,7 @@ describe Stretcher::IndexType do
     it "should delete by query correctly" do
       type.delete_query("match_all" => {})
       index.refresh
-      type.exists?(987).should
+      type.exists?(987).should be_false
     end
 
     it "should delete individual docs correctly" do
