@@ -1,17 +1,27 @@
 require 'spec_helper'
 
-describe Stretcher::Index do
+describe Stretcher::IndexType do
   let(:server) { Stretcher::Server.new(ES_URL) }
-  let(:index) { server.index('foo') }
-  let(:type) { index.type('bar') }
+  let(:index) { 
+    i = server.index(:foo)
+    i
+  }
+  let(:type) { 
+    t = index.type(:bar) 
+    t.delete_query(:match_all => {})
+    index.refresh
+    mapping = {"bar" => {"properties" => {"message" => {"type" => "string"}}}}
+    t.put_mapping mapping
+    t
+  }
 
   it "should be existentially aware" do
-    type.delete rescue nil
-    type.exists?.should be_false
-    mapping = {"bar" => {"properties" => {"message" => {"type" => "string"}}}}
-    type.put_mapping mapping
-    type.exists?.should be_true
-    type.get_mapping.should == mapping
+    t = index.type(:existential)
+    t.exists?.should be_false
+    mapping = {"existential" => {"properties" => {"message" => {"type" => "string"}}}}
+    t.put_mapping mapping
+    t.exists?.should be_true
+    t.get_mapping.should == mapping
   end
 
   describe "searching" do
@@ -32,17 +42,22 @@ describe Stretcher::Index do
     end
   end
 
-  describe "put/get" do
+  describe "put/get/delete" do
     before do
       @doc = {:message => "hello!"}
+      @put_res = type.put(987, @doc)
     end
 
     it "should put correctly" do
-      type.put(987, @doc).should_not be_nil
+      @put_res.should_not be_nil
     end
-
+    
     it "should get individual documents correctly" do
       type.get(987).message.should == @doc[:message]
+    end
+
+    it "should return nil when retrieving non-extant docs" do
+      type.get(898323329).should be_nil
     end
 
     it "should get individual raw documents correctly" do
@@ -54,6 +69,12 @@ describe Stretcher::Index do
     it "should update individual docs correctly" do
       type.update(987, :script => "ctx._source.message = 'Updated!'")
       type.get(987).message.should == 'Updated!'
+    end
+
+    it "should delete by query correctly" do
+      type.delete_query("match_all" => {})
+      index.refresh
+      type.exists?(987).should
     end
 
     it "should delete individual docs correctly" do

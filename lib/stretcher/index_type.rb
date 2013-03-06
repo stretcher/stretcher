@@ -13,9 +13,12 @@ module Stretcher
 
     # Retrieves the document by ID
     # Normally this returns the contents of _source, however, the 'raw' flag is passed in, it will return the full response hash
+    # Returns nil if the document does not exist
     def get(id, raw=false)
       res = request(:get, id)
       raw ? res : res["_source"]
+    rescue RequestError::NotFound
+      nil
     end
 
     # Index an item with a specific ID
@@ -63,9 +66,12 @@ module Stretcher
     def exists?(id=nil)
       request :head, id
       true
-    rescue Stretcher::RequestError => e
-      raise e if e.http_response.status != 404
+    rescue Stretcher::RequestError::NotFound => e
       false
+    end
+
+    def delete_query(query)
+      do_delete_query(query)
     end
 
     # Issues an Index#search scoped to this type

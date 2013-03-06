@@ -78,6 +78,10 @@ module Stretcher
       false
     end
 
+    def delete_query(query)
+      do_delete_query(query)
+    end
+
     # Issues a search with the given query opts and body, both should be hashes
     #
     #    res = server.index('foo').search(size: 12, {query: {match_all: {}}})

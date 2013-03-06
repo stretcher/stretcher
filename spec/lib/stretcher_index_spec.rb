@@ -28,6 +28,7 @@ describe Stretcher::Index do
   def seed_corpus
     create_tweet_mapping
     index.bulk_index(corpus)
+    index.refresh
   end
 
   it "should work on an existential level" do
@@ -68,6 +69,14 @@ describe Stretcher::Index do
     corpus.each {|doc|
       index.type(doc["_type"]).get(doc["_id"] || doc["id"]).text.should == doc[:text]
     }
+  end
+
+  it "should delete by query" do
+    seed_corpus
+    index.search(:query => {:match_all => {}}).total == 3
+    index.delete_query(:match_all => {})
+    index.refresh
+    index.search(:query => {:match_all => {}}).total == 0
   end
 
   it "should search without error" do

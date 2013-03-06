@@ -146,6 +146,10 @@ module Stretcher
 
       if res.status >= 200 && res.status <= 299
         res.body
+      elsif res.status == 404
+        err_str = "Error processing request, could not find endpoin (#{res.status})! #{res.env[:method]} URL: #{res.env[:url]}"
+        err_str << "\n Resp Body: #{res.body}"
+        raise RequestError::NotFound.new(res), err_str
       else
         err_str = "Error processing request (#{res.status})! #{res.env[:method]} URL: #{res.env[:url]}"
         err_str << "\n Resp Body: #{res.body}"

@@ -6,5 +6,8 @@ module Stretcher
     def initialize(http_response)
       @http_response = http_response
     end
+
+    class NotFound < RequestError
+    end
   end
 end

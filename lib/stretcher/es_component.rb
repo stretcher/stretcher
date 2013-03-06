@@ -33,5 +33,11 @@ module Stretcher
       raise "Cannot issue request, no server specified!" unless @server
       @server.request(method, prefixed_path, query_opts, *args, &block)
     end
+
+    def do_delete_query(query)
+      request :delete, '_query' do |req|
+        req.body = query
+      end
+    end
   end
 end
