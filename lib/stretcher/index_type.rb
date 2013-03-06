@@ -23,6 +23,11 @@ module Stretcher
       request(:put, id, source)
     end
 
+    # Index an item with automatic ID generation
+    def post(source)
+      request(:post, nil, source)
+    end
+
     # Uses the update api to modify a document with a script
     # To update a doc with ID 987 for example:
     # type.update(987, script: "ctx._source.message = 'Updated!'")

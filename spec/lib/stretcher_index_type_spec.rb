@@ -42,6 +42,10 @@ describe Stretcher::Index do
       type.put(987, @doc).should_not be_nil
     end
 
+    it "should post correctly" do
+      type.post(@doc).should_not be_nil
+    end
+
     it "should get individual documents correctly" do
       type.get(987).message.should == @doc[:message]
     end
