@@ -4,7 +4,14 @@ describe Stretcher::Index do
   let(:server) {
     Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER)
   }
-  let(:index) { server.index('foo') }
+  let(:index) { 
+    i = server.index('foo')
+    i.delete
+    server.refresh
+    i.create
+    server.refresh
+    i
+  }
   let(:corpus) {
     [
      {:text => "Foo", "_type" => 'tweet', "_id" => 'fooid'},
