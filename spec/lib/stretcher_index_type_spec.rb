@@ -57,7 +57,7 @@ describe Stretcher::IndexType do
     end
 
     it "should return nil when retrieving non-extant docs" do
-      type.get(898323329).should be_nil
+      type.get(898323329).should raise_exception(Stretcher::RequestError::NotFound)
     end
 
     it "should get individual raw documents correctly" do

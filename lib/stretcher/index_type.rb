@@ -17,8 +17,6 @@ module Stretcher
     def get(id, raw=false)
       res = request(:get, id)
       raw ? res : res["_source"]
-    rescue RequestError::NotFound
-      nil
     end
 
     # Index an item with a specific ID
