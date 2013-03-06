@@ -9,7 +9,9 @@ describe Stretcher::Index do
     i.delete
     server.refresh
     i.create
+    # Why do both? Doesn't hurt, and it fixes some races
     server.refresh
+    i.refresh
     i
   }
   let(:corpus) {
