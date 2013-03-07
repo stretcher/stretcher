@@ -2,12 +2,12 @@ require 'spec_helper'
 
 describe Stretcher::IndexType do
   let(:server) { Stretcher::Server.new(ES_URL) }
-  let(:index) { 
+  let(:index) {
     i = server.index(:foo)
     i
   }
-  let(:type) { 
-    t = index.type(:bar) 
+  let(:type) {
+    t = index.type(:bar)
     t.delete_query(:match_all => {})
     index.refresh
     mapping = {"bar" => {"properties" => {"message" => {"type" => "string"}}}}
@@ -39,6 +39,11 @@ describe Stretcher::IndexType do
     it "should build results when _source is not included in loaded fields" do
       res = type.search({}, {query: {match_all: {}}, fields: ['message']})
       res.results.first.message.should == @doc[:message]
+    end
+
+    it "should build results when no document fields are selected" do
+      res = type.search({}, {query: {match_all: {}}, fields: ['_id']})
+      res.results.first.should have_key '_id'
     end
   end
 

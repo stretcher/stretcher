@@ -121,7 +121,7 @@ module Stretcher
         req.body = text
       end
     end
-    
+
     # Perform a refresh making all items in this index available instantly
     def refresh
       do_refresh
