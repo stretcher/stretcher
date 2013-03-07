@@ -18,9 +18,11 @@ module Stretcher
       super
       self.total = raw.hits.total
       self.facets = raw.facets
-      self.results = raw.hits.hits.collect {|r|
-        (r.has_key?('_source') ? r['_source'] : r['fields']).merge({"_id" => r['_id']})
-      }
+      self.results = raw.hits.hits.collect do |r|
+        k = ['_source', 'fields'].detect { |k| r.key?(k) }
+        doc = k.nil? ? Hashie::Mash.new : r[k]
+        doc.merge({"_id" => r['_id']})
+      end
     end
   end
 end
