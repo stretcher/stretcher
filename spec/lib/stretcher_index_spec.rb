@@ -4,7 +4,7 @@ describe Stretcher::Index do
   let(:server) {
     Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER)
   }
-  let(:index) { 
+  let(:index) {
     i = server.index('foo')
     i.delete
     server.refresh
@@ -98,7 +98,7 @@ describe Stretcher::Index do
   end
 
   it "execute the analysis API and return an expected result" do
-    analyzed = index.analyze("Candles", :analyzer => :snowball)
+    analyzed = server.index(:foo).analyze("Candles", :analyzer => :snowball)
     analyzed.tokens.first.token.should == 'candl'
   end
 
