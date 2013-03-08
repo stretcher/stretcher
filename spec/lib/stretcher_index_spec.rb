@@ -6,7 +6,10 @@ describe Stretcher::Index do
   }
   let(:index) {
     i = server.index('foo')
-    i.delete
+    begin
+      i.delete
+    rescue Stretcher::RequestError::NotFound
+    end
     server.refresh
     i.create
     # Why do both? Doesn't hurt, and it fixes some races
