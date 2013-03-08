@@ -76,7 +76,9 @@ module Stretcher
     rescue Stretcher::RequestError::NotFound
       false
     end
-
+    
+    # Delete documents by a given query.
+    # Per: http://www.elasticsearch.org/guide/reference/api/delete-by-query.html
     def delete_query(query)
       do_delete_query(query)
     end
