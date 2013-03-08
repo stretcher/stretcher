@@ -73,8 +73,7 @@ module Stretcher
       # Unless the exception is hit we know its a 2xx response
       request(:head)
       true
-    rescue Stretcher::RequestError => e
-      raise e if e.http_response.status != 404
+    rescue Stretcher::RequestError::NotFound
       false
     end
 
