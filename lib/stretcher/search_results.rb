@@ -21,7 +21,10 @@ module Stretcher
       self.results = raw.hits.hits.collect do |r|
         k = ['_source', 'fields'].detect { |k| r.key?(k) }
         doc = k.nil? ? Hashie::Mash.new : r[k]
-        doc.merge({"_id" => r['_id']})
+        if r.key?('highlight')
+          doc.merge!({"_highlight" => r['highlight']})
+        end
+        doc.merge!({"_id" => r['_id']})
       end
     end
   end
