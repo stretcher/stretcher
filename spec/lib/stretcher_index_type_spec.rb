@@ -32,22 +32,22 @@ describe Stretcher::IndexType do
     end
 
     it "should search and find the right doc" do
-      res = type.search({}, {:query => {:match => {:message => @doc[:message]}}})
+      res = type.search(:query => {:match => {:message => @doc[:message]}})
       res.results.first.message.should == @doc[:message]
     end
 
     it "should build results when _source is not included in loaded fields" do
-      res = type.search({}, {query: {match_all: {}}, fields: ['message']})
+      res = type.search(query: {match_all: {}}, fields: ['message'])
       res.results.first.message.should == @doc[:message]
     end
 
     it "should build results when no document fields are selected" do
-      res = type.search({}, {query: {match_all: {}}, fields: ['_id']})
+      res = type.search(query: {match_all: {}}, fields: ['_id'])
       res.results.first.should have_key '_id'
     end
 
     it "should add _highlight field to resulting documents when present" do
-      res = type.search({}, {:query => {:match => {:message => 'hello'}}, :highlight => {:fields => {:message => {}}}})
+      res = type.search(:query => {:match => {:message => 'hello'}}, :highlight => {:fields => {:message => {}}})
       res.results.first.message.should == @doc[:message]
       res.results.first.should have_key '_highlight'
     end
