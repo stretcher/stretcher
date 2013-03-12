@@ -19,6 +19,13 @@ module Stretcher
       raw ? res : res["_source"]
     end
 
+    # Explains a query for a specific document
+    def explain(id, query)
+      request(:get, "#{id}/_explain") do |req|
+        req.body = query
+      end
+    end
+
     # Index an item with a specific ID
     def put(id, source)
       request(:put, id, source)
