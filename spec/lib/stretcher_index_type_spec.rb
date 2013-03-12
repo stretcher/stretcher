@@ -53,7 +53,7 @@ describe Stretcher::IndexType do
     end
   end
 
-  describe "put/get/delete" do
+  describe "put/get/delete/explain" do
     before do
       @doc = {:message => "hello!"}
       @put_res = type.put(987, @doc)
@@ -81,6 +81,13 @@ describe Stretcher::IndexType do
       res = type.get(987, true)
       res["_id"].should == "987"
       res["_source"].message.should == @doc[:message]
+    end
+
+    it "should explain a query" do
+      type.exists?(987).should be_true
+      index.refresh
+      res = type.explain(987, {:query => {:match_all => {}}})
+      res.should have_key('explanation')
     end
 
     it "should update individual docs correctly" do
