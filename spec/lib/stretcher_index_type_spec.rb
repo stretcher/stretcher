@@ -45,6 +45,12 @@ describe Stretcher::IndexType do
       res = type.search({}, {query: {match_all: {}}, fields: ['_id']})
       res.results.first.should have_key '_id'
     end
+
+    it "should add _highlight field to resulting documents when present" do
+      res = type.search({}, {:query => {:match => {:message => 'hello'}}, :highlight => {:fields => {:message => {}}}})
+      res.results.first.message.should == @doc[:message]
+      res.results.first.should have_key '_highlight'
+    end
   end
 
   describe "put/get/delete" do
