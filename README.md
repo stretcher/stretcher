@@ -93,11 +93,12 @@ Specs may be run with `rake spec`
 
 ## Contributors
 
-* @andrewvc
-* @psynix
-* @fmardini
-* @chatgris
-* @alpinegizmo
+* [@andrewvc](https://github.com/andrewvc)
+* [@psynix](https://github.com/psynix)
+* [@fmardini](https://github.com/fmardini)
+* [@chatgris](https://github.com/chatgris)
+* [@alpinegizmo](https://github.com/alpinegizmo)
+* [@mcolyer](https://github.com/mcolyer)
 
 ## Contributing
 
