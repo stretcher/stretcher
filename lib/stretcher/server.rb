@@ -30,6 +30,11 @@ module Stretcher
         builder.options[:open_timeout] = 2
       end
 
+      uri_components = URI.parse(@uri)
+      if uri_components.user || uri_components.password
+        @http.basic_auth(uri_components.user, uri_components.password)
+      end
+
       if options[:logger]
         @logger = options[:logger]
       else
