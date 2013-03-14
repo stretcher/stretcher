@@ -3,6 +3,7 @@ require 'hashie'
 require 'net/http/persistent'
 require 'faraday'
 require 'faraday_middleware'
+Faraday.load_autoloaded_constants
 require "stretcher/version"
 require 'stretcher/request_error'
 require 'stretcher/search_results'
