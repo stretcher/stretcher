@@ -115,13 +115,23 @@ module Stretcher
     end
 
     # Implements the Analyze API
-    # EX:
+    # Ex:
     #    server.analyze("Candles", analyzer: :snowball)
     #    # => #<Hashie::Mash tokens=[#<Hashie::Mash end_offset=7 position=1 start_offset=0 token="candl" type="<ALPHANUM>">]>
     # as per: http://www.elasticsearch.org/guide/reference/api/admin-indices-analyze.html
     def analyze(text, analysis_params)
       request(:get, path_uri("/_analyze"), analysis_params) do |req|
         req.body = text
+      end
+    end
+    
+    # Implements the Aliases API
+    # Ex: 
+    # server.aliases({actions: {add: {index: :my_index, alias: :my_alias}}})
+    # as per: http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases.html
+    def aliases(body)
+      request(:post, path_uri("/_aliases")) do |req|
+        req.body = body
       end
     end
 
