@@ -24,7 +24,7 @@ module Stretcher
         if r.key?('highlight')
           doc.merge!({"_highlight" => r['highlight']})
         end
-        doc.merge!({"_id" => r['_id']})
+        doc.merge!({"_id" => r['_id'], "_index" => r['_index'], "_type" => r['_type']})
       end
     end
   end
