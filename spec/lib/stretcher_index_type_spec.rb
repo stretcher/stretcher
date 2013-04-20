@@ -55,7 +55,7 @@ describe Stretcher::IndexType do
 
   describe "put/get/delete/explain" do
     before do
-      @doc = {:message => "hello!"}
+      @doc = {:message => "hello!", :_timestamp => 1366420401}
       @put_res = type.put(987, @doc)
     end
 
@@ -77,7 +77,19 @@ describe Stretcher::IndexType do
       }.should raise_exception(Stretcher::RequestError::NotFound)
     end
 
+    it "should get individual, passing through additional options" do
+      res = type.get(987, {:fields => ['_timestamp']})
+      res._timestamp.should == @doc[:_timestamp]
+      res.message == nil
+    end
+
     it "should get individual raw documents correctly" do
+      res = type.get(987, {}, true)
+      res["_id"].should == "987"
+      res["_source"].message.should == @doc[:message]
+    end
+
+    it "should get individual raw documents correctly with legacy API" do
       res = type.get(987, true)
       res["_id"].should == "987"
       res["_source"].message.should == @doc[:message]
