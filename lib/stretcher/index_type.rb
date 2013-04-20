@@ -15,7 +15,7 @@ module Stretcher
     # Normally this returns the contents of _source, however, the 'raw' flag is passed in, it will return the full response hash
     # Returns nil if the document does not exist
     def get(id, options={}, raw=false)
-      if options == true # Support raw as second argument, legacy API
+      if options == true || options == false # Support raw as second argument, legacy API
         raw = true
         options = {}
       end
