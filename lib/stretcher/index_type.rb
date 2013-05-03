@@ -44,8 +44,8 @@ module Stretcher
     # To update a doc with ID 987 for example:
     # type.update(987, script: "ctx._source.message = 'Updated!'")
     # See http://www.elasticsearch.org/guide/reference/api/update.html
-    def update(id, body)
-      request(:post, "#{id}/_update", body)
+    def update(id, body, options={})
+      request(:post, Util.qurl("#{id}/_update", options), body)
     end
 
     # Deletes the document with the given ID
