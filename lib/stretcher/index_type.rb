@@ -44,6 +44,8 @@ module Stretcher
     # To update a doc with ID 987 for example:
     # type.update(987, script: "ctx._source.message = 'Updated!'")
     # See http://www.elasticsearch.org/guide/reference/api/update.html
+    # Takes an optional, third options hash, allowing you to specify
+    # Additional query parameters such as +fields+ and +routing+
     def update(id, body, options={})
       request(:post, Util.qurl("#{id}/_update", options), body)
     end
