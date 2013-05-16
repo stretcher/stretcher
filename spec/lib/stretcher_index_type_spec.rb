@@ -53,6 +53,22 @@ describe Stretcher::IndexType do
     end
   end
 
+  describe 'mget' do
+    let(:doc_one) {{:message => "message one!", :_timestamp => 1366420402}}
+    let(:doc_two) {{:message => "message two!", :_timestamp => 1366420403}}
+
+    before do
+      type.put(988, doc_one)
+      type.put(989, doc_two)
+    end
+
+    it 'fetches multiple documents by id' do
+      type.mget([988, 989]).docs.count.should == 2
+      type.mget([988, 989]).docs.first._source.message.should == 'message one!'
+      type.mget([988, 989]).docs.last._source.message.should == 'message two!'
+    end
+  end
+
   describe "put/get/delete/explain" do
     before do
       @doc = {:message => "hello!", :_timestamp => 1366420401}
