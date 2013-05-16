@@ -23,6 +23,14 @@ module Stretcher
       raw ? res : res["_source"]
     end
 
+    # Retrieves multiple documents of the index type by ID
+    # http://www.elasticsearch.org/guide/reference/api/multi-get/
+    def mget(ids)
+      request(:get, '_mget') do |req|
+        req.body = {ids: ids}
+      end
+    end
+
     # Explains a query for a specific document
     def explain(id, query)
       request(:get, "#{id}/_explain") do |req|
