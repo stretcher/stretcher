@@ -27,12 +27,12 @@ describe Stretcher::Server do
 
   it "should perform alias operations properly" do
     # Tear down any leftovers from previous runs
-    server.aliases(actions: [{remove: {alias: :foo_alias}}]) if server.index(:foo_alias).exists?
+    server.aliases(:actions => [{:remove => {:alias => :foo_alias}}]) if server.index(:foo_alias).exists?
     server.index(:foo).delete if server.index(:foo).exists?
 
     server.index(:foo).create
-    server.aliases(actions: [{add: {index: :foo, alias: :foo_alias}}])
-    
+    server.aliases(:actions => [{:add => {:index => :foo, :alias => :foo_alias}}])
+
     server.index(:foo_alias).get_settings.should == server.index(:foo).get_settings
   end
 
