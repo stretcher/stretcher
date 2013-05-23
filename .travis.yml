@@ -1,4 +1,8 @@
 language: ruby
+
+services:
+  - elasticsearch
+
 rvm:
   - ruby-head
   - 2.0.0
