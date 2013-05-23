@@ -27,7 +27,7 @@ module Stretcher
     # http://www.elasticsearch.org/guide/reference/api/multi-get/
     def mget(ids)
       request(:get, '_mget') do |req|
-        req.body = {ids: ids}
+        req.body = { :ids => ids }
       end
     end
 
