@@ -1,5 +1,7 @@
 # Stretcher
 
+[![Build Status](https://travis-ci.org/PoseBiz/stretcher.png?branch=master)](https://travis-ci.org/PoseBiz/stretcher)
+
 A concise, fast ElasticSearch client designed to reflect the actual elastic search API as closely as possible. Elastic search's API is complex, and mostly documented on the Elastic Search Guide. This client tries to stay out of your way more than others making advanced techniques easier to implement, and making debugging Elastic Search's sometimes cryptic errors easier.
 
 # Features
