@@ -1,6 +1,8 @@
 # Stretcher
 
+[![Gem Version](https://badge.fury.io/rb/stretcher.png)](http://badge.fury.io/rb/stretcher)
 [![Build Status](https://travis-ci.org/PoseBiz/stretcher.png?branch=master)](https://travis-ci.org/PoseBiz/stretcher)
+[![Code Climate](https://codeclimate.com/github/PoseBiz/stretcher.png)](https://codeclimate.com/github/PoseBiz/stretcher)
 
 A concise, fast ElasticSearch client designed to reflect the actual elastic search API as closely as possible. Elastic search's API is complex, and mostly documented on the Elastic Search Guide. This client tries to stay out of your way more than others making advanced techniques easier to implement, and making debugging Elastic Search's sometimes cryptic errors easier.
 
@@ -25,7 +27,7 @@ gem 'stretcher'
 
 ### Basic Usage
 
-```ruby   
+```ruby
 # First Create a server
 server = Stretcher::Server.new('http://localhost:9200')
 # Delete an index (in case you already have this one)
@@ -54,13 +56,13 @@ res.raw     # => #<Hashie::Mash ...> Raw JSON from the search
 Stretcher::Server.with_server('http://localhost:9200') {|srv|
   srv.index(:foo) {|idx|
     idx.type(:tweet) {|t| {exists: t.exists?, mapping: t.get_mapping} }
-  } 
+  }
 }
 # => {:exists=>true, :mapping=>#<Hashie::Mash tweet=...>}
 ```
 
 ### Multi Search
-    
+
 ```ruby
 # Within a single index
 server.index(:foo).msearch([{query: {match_all: {}}}])
@@ -71,7 +73,7 @@ server.msearch([{index: :foo}, {query: {match_all: {}}}])
 ```
 
 ### Bulk Indexing
-    
+
 ```ruby
 docs = [{"_type" => "tweet", "_id" => 91011, "text" => "Bulked"}]
 server.index(:foo).bulk_index(docs)
