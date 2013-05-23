@@ -22,6 +22,10 @@ Gem::Specification.new do |gem|
     gem.add_runtime_dependency('json-jruby')
   end
 
+  if RUBY_VERSION < "1.9"
+    gem.add_runtime_dependency('json')
+  end
+
   gem.add_dependency('faraday', '~> 0.8')
   gem.add_dependency('faraday_middleware', '~> 0.9.0')
   gem.add_dependency('net-http-persistent', '~> 2.8')
