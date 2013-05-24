@@ -1,7 +1,7 @@
 require 'thread'
 require 'logger'
 require 'hashie'
-require 'net/http/persistent'
+require 'excon'
 require 'faraday'
 require 'faraday_middleware'
 Faraday.load_autoloaded_constants
