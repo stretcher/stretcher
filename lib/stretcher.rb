@@ -1,3 +1,4 @@
+require 'thread'
 require 'logger'
 require 'hashie'
 require 'net/http/persistent'

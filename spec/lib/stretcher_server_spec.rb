@@ -17,6 +17,18 @@ describe Stretcher::Server do
     exposed.class.should == Stretcher::Server
   end
 
+  it "should properly set alternate faraday options if requested" do
+    # This spec could work better, but it's hard to reach into the
+    # guts of faraday
+    conf_called = false
+    configurator = lambda {|builder|
+      builder.adapter :net_http
+      conf_called = true
+    }
+    srv = Stretcher::Server.new(ES_URL, {:faraday_configurator => configurator})
+    conf_called.should be_true
+  end
+
   it "should properly return that our server is up" do
     server.up?.should be_true
   end
@@ -29,7 +41,6 @@ describe Stretcher::Server do
     # Tear down any leftovers from previous runs
     server.aliases(:actions => [{:remove => {:alias => :foo_alias}}]) if server.index(:foo_alias).exists?
     server.index(:foo).delete if server.index(:foo).exists?
-
     server.index(:foo).create
     server.aliases(:actions => [{:add => {:index => :foo, :alias => :foo_alias}}])
 

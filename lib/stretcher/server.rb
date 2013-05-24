@@ -15,7 +15,17 @@ module Stretcher
     # The options hash takes an optional instance of Logger under :logger.
     #
     #    server = Stretcher::Server.new('http://localhost:9200')
+    # 
+    # The default implementation here uses the net_http_persistent adapter
+    # for faraday. If you would like to use a different HTTP library, or alter
+    # other faraday config settings you may specify an optional :faraday_configurator
+    # argument, with a Proc as a value. This will be called once with the faraday builder.
+    #
+    # For instance:
+    # configurator = proc {|builder| builder.adapter :typhoeus
+    # Stretcher::Server.new('http://localhost:9200', :faraday_configurator => configurator)
     def initialize(uri='http://localhost:9200', options={})
+      @request_mtx = Mutex.new
       @uri = uri
 
       @http = Faraday.new(:url => @uri) do |builder|
@@ -24,10 +34,14 @@ module Stretcher
 
         builder.request :json
 
-        builder.adapter :net_http_persistent
+        builder.options[:read_timeout] = 4 || options[:read_timeout]
+        builder.options[:open_timeout] = 2 || options[:open_timeout]
 
-        builder.options[:read_timeout] = 4
-        builder.options[:open_timeout] = 2
+        if faraday_configurator = options[:faraday_configurator]
+          faraday_configurator.call(builder)
+        else
+          builder.adapter :excon
+        end
       end
 
       uri_components = URI.parse(@uri)
@@ -149,15 +163,20 @@ module Stretcher
     # Will raise an exception when the status is not in the 2xx range
     def request(method, url=nil, query_opts=nil, *args, &block)
       logger.info { "Stretcher: Issuing Request #{method.to_s.upcase}, #{Util.qurl(url,query_opts)}" }
-      res = if block
-              http.send(method, url, query_opts, *args) do |req|
-                # Elastic search does mostly deal with JSON
-                req.headers["Content-Type"] = 'application/json'
-                block.call(req)
+      
+      # Our default client is threadsafe, but some others might not be
+      res = nil
+      @request_mtx.synchronize {
+        res = if block
+                http.send(method, url, query_opts, *args) do |req|
+                  # Elastic search does mostly deal with JSON
+                  req.headers["Content-Type"] = 'application/json'
+                  block.call(req)
+                end
+              else
+                http.send(method, url, query_opts, *args)
               end
-            else
-              http.send(method, url, query_opts, *args)
-            end
+      }
 
       if res.status >= 200 && res.status <= 299
         res.body
