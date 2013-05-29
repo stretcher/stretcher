@@ -34,6 +34,8 @@ describe Stretcher::Server do
     server.aliases(:actions => [{:add => {:index => :foo, :alias => :foo_alias}}])
 
     server.index(:foo_alias).get_settings.should == server.index(:foo).get_settings
+
+    server.aliases[:foo][:aliases].keys.should include 'foo_alias'
   end
 
   it "should check the status w/o error" do

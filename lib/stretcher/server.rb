@@ -129,9 +129,13 @@ module Stretcher
     # Ex:
     # server.aliases({actions: {add: {index: :my_index, alias: :my_alias}}})
     # as per: http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases.html
-    def aliases(body)
-      request(:post, path_uri("/_aliases")) do |req|
-        req.body = body
+    def aliases(body=nil)
+      if body
+        request(:post, path_uri("/_aliases")) do |req|
+          req.body = body
+        end
+      else
+        request(:get, path_uri("/_aliases"))
       end
     end
 
