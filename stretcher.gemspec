@@ -32,6 +32,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency('hashie', '~> 1.2.0')
 
   gem.add_development_dependency 'rspec', '>= 2.5.0'
+  gem.add_development_dependency 'coveralls'
   gem.add_development_dependency 'simplecov'
   gem.add_development_dependency 'vcr'
   gem.add_development_dependency 'rake'
