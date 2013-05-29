@@ -124,9 +124,9 @@ module Stretcher
         req.body = text
       end
     end
-    
+
     # Implements the Aliases API
-    # Ex: 
+    # Ex:
     # server.aliases({actions: {add: {index: :my_index, alias: :my_alias}}})
     # as per: http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases.html
     def aliases(body)
