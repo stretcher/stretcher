@@ -94,9 +94,9 @@ describe Stretcher::IndexType do
     end
 
     it "should get individual, passing through additional options" do
-      res = type.get(987, {:fields => ['_timestamp']})
+      res = type.get(987, {:fields => '_timestamp'})
       res._timestamp.should == @doc[:_timestamp]
-      res.message == nil
+      res.message.should == nil
     end
 
     it "should get individual raw documents correctly" do
