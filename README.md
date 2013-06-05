@@ -10,11 +10,12 @@ A concise, fast ElasticSearch client designed to reflect the actual elastic sear
 # Features
 
 * Cleanly matches up to elastic search's JSON api
-* Efficiently re-uses connections on a per-server object basis (via net/http/persistent)
+* Efficiently re-uses connections on a per-server object basis (via excon)
 * Supports efficient bulk indexing operations
 * Returns most responses in convenient Hashie::Mash form
 * Configurable logging
 * Pure, threadsafe, ruby
+* Easily swap HTTP clients via Faraday
 
 ## Installation
 
