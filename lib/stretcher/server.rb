@@ -169,19 +169,20 @@ module Stretcher
       logger.info { "Stretcher: Issuing Request #{method.to_s.upcase}, #{Util.qurl(url,query_opts)}" }
       
       # Our default client is threadsafe, but some others might not be
-      res = nil
-      @request_mtx.synchronize {
-        res = if block
-                http.send(method, url, query_opts, *args) do |req|
-                  # Elastic search does mostly deal with JSON
-                  req.headers["Content-Type"] = 'application/json'
-                  block.call(req)
-                end
-              else
-                http.send(method, url, query_opts, *args)
-              end
-      }
+      check_response(@request_mtx.synchronize {
+        if block
+          http.send(method, url, query_opts, *args) do |req|
+            # Default content type to json, the block can change this of course
+            req.headers["Content-Type"] = 'application/json' unless req.headers
+            block.call(req)
+          end
+        else
+          http.send(method, url, query_opts, *args)
+        end
+      })
+    end
 
+    def check_response(res)
       if res.status >= 200 && res.status <= 299
         res.body
       elsif [404, 410].include? res.status
