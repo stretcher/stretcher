@@ -2,7 +2,7 @@ module Stretcher
   class Server < EsComponent
     attr_reader :uri, :http, :logger
 
-    # Internal use only
+    # Internal use only.
     # Returns a properly configured HTTP client when initializing an instance
     def self.build_client(uri, options={})
       http = Faraday.new(:url => uri) do |builder|
@@ -29,7 +29,7 @@ module Stretcher
       http
     end
     
-    # Internal use only
+    # Internal use only.
     # Builds a logger when initializing an instance
     def self.build_logger(options)
       logger = nil
@@ -73,9 +73,7 @@ module Stretcher
     def initialize(uri='http://localhost:9200', options={})
       @request_mtx = Mutex.new
       @uri = uri
-
       @http = self.class.build_client(@uri, options)
-      
       @logger = self.class.build_logger(options)
     end
 
@@ -89,7 +87,9 @@ module Stretcher
       idx = Index.new(self, name, :logger => logger)
       block ? block.call(idx) : idx
     end
-
+    
+    # Perform a raw bulk operation. You probably want to use Stretcher::Index#bulk_index
+    # which properly formats a bulk index request.
     def bulk(data)
       request(:post, path_uri("/_bulk")) do |req|
         req.body = data
