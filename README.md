@@ -80,14 +80,14 @@ docs = [{"_type" => "tweet", "_id" => 91011, "text" => "Bulked"}]
 server.index(:foo).bulk_index(docs)
 ```
 
+### Full Documentation
+
+This README documents only part of stretcher's API. The full documentation for stretcher is available in its [full rdocs](http://rdoc.info/github/PoseBiz/stretcher/master/frames).
+
 ### Rails Integration
 
 Stretcher is a low level-client, but it was built as a part of a full suite of Rails integration tools.
 While not yet open-sourced, you can read our detailed blog post: [integrating Stretcher with Rails](http://blog.andrewvc.com/elasticsearch-rails-stretcher-at-pose).
-
-### Full Documentation
-
-This README documents only part of stretcher's API. The full documentation for stretcher is available in its [full rdocs](http://rdoc.info/github/PoseBiz/stretcher/master/frames).
 
 ## Running Specs
 
