@@ -2,6 +2,52 @@ module Stretcher
   class Server < EsComponent
     attr_reader :uri, :http, :logger
 
+    # :nodoc:
+    # Returns a properly configured HTTP client
+    # Generally for internal use only
+    def self.build_client(uri, options={})
+      http = Faraday.new(:url => uri) do |builder|
+        builder.response :mashify
+        builder.response :json, :content_type => /\bjson$/
+
+        builder.request :json
+
+        builder.options[:read_timeout] = 4 || options[:read_timeout]
+        builder.options[:open_timeout] = 2 || options[:open_timeout]
+
+        if faraday_configurator = options[:faraday_configurator]
+          faraday_configurator.call(builder)
+        else
+          builder.adapter :excon
+        end
+      end
+
+      uri_components = URI.parse(uri)
+      if uri_components.user || uri_components.password
+        http.basic_auth(uri_components.user, uri_components.password)
+      end
+      
+      http
+    end
+    
+    # :nodoc:
+    def self.build_logger(options)
+      logger = nil
+      
+      if options[:logger]
+        logger = options[:logger]
+      else
+        logger = Logger.new(STDOUT)
+        logger.level = Logger::WARN
+      end
+
+      logger.formatter = proc do |severity, datetime, progname, msg|
+        "[Stretcher][#{severity}]: #{msg}\n"
+      end
+      
+      logger
+    end
+
     # Instantiate a new instance in a manner convenient for using the block syntax.
     # Can be used interchangably with +Stretcher::Server.new+ but will return the value
     # of the block if present. See the regular constructor for full options.
@@ -28,37 +74,9 @@ module Stretcher
       @request_mtx = Mutex.new
       @uri = uri
 
-      @http = Faraday.new(:url => @uri) do |builder|
-        builder.response :mashify
-        builder.response :json, :content_type => /\bjson$/
-
-        builder.request :json
-
-        builder.options[:read_timeout] = 4 || options[:read_timeout]
-        builder.options[:open_timeout] = 2 || options[:open_timeout]
-
-        if faraday_configurator = options[:faraday_configurator]
-          faraday_configurator.call(builder)
-        else
-          builder.adapter :excon
-        end
-      end
-
-      uri_components = URI.parse(@uri)
-      if uri_components.user || uri_components.password
-        @http.basic_auth(uri_components.user, uri_components.password)
-      end
-
-      if options[:logger]
-        @logger = options[:logger]
-      else
-        @logger = Logger.new(STDOUT)
-        @logger.level = Logger::WARN
-      end
-
-      @logger.formatter = proc do |severity, datetime, progname, msg|
-        "[Stretcher][#{severity}]: #{msg}\n"
-      end
+      @http = self.class.build_client(@uri, options)
+      
+      @logger = self.class.build_logger(options)
     end
 
     # Returns a Stretcher::Index object for the index +name+.
@@ -182,6 +200,8 @@ module Stretcher
       })
     end
 
+    # :nodoc:
+    # Check response codes from request
     def check_response(res)
       if res.status >= 200 && res.status <= 299
         res.body
