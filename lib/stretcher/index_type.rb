@@ -20,7 +20,7 @@ module Stretcher
         options = {}
       end
       res = request(:get, id, options)
-      raw ? res : res["_source"]
+      raw ? res : (res["_source"] || res["fields"])
     end
 
     # Retrieves multiple documents of the index type by ID
