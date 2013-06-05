@@ -11,15 +11,15 @@ module Stretcher
       @logger = options[:logger] || index.logger
     end
 
-    # Retrieves the document by ID
-    # Normally this returns the contents of _source, however, the 'raw' flag is passed in, it will return the full response hash
-    # Returns nil if the document does not exist
+    # Retrieves the document by ID.
+    # Normally this returns the contents of _source, however, if the 'raw' flag is passed in, it will return the full response hash.
+    # Returns nil if the document does not exist.
     # 
-    # The :fields argument can either be a csv String or an Array. e.g. [:field1,'field2] or "field1,field2"
-    # If the fields parameter is passed in those fields are returned instead
-    # of the _source.
+    # The :fields argument can either be a csv String or an Array. e.g. [:field1,'field2] or "field1,field2".
+    # If the fields parameter is passed in those fields are returned instead of _source.
     #
-    # If, you include _source as a field, along with other fields you MUST set the raw flag to true to receive all the response data if that's what you really want. Otherwise, only _source will be returned
+    # If, you include _source as a field, along with other fields you MUST set the raw flag to true to 
+    # receive both fields and _source. Otherwise, only _source will be returned
     def get(id, options={}, raw=false)
       if options == true || options == false # Support raw as second argument, legacy API
         raw = true
