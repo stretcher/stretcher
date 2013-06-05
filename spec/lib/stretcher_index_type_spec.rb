@@ -93,10 +93,22 @@ describe Stretcher::IndexType do
       }.should raise_exception(Stretcher::RequestError::NotFound)
     end
 
-    it "should get individual, passing through additional options" do
+    it "should get individual fields given a String, passing through additional options" do
       res = type.get(987, {:fields => '_timestamp'})
       res._timestamp.should == @doc[:_timestamp]
       res.message.should == nil
+    end
+
+    it "should get individual fields given an Array, passing through additional options" do
+      res = type.get(987, {:fields => ['_timestamp']})
+      res._timestamp.should == @doc[:_timestamp]
+      res.message.should == nil
+    end
+
+    it "should have source and other fields accessible when raw=true" do
+      res = type.get(987, {:fields => ['_timestamp', '_source']}, true)
+      res._source.message == @doc[:message]
+      res.fields._timestamp.should == @doc[:_timestamp]
     end
 
     it "should get individual raw documents correctly" do
