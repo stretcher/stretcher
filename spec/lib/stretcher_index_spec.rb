@@ -92,6 +92,17 @@ describe Stretcher::Index do
     res.results.first.text.should == match_text
   end
 
+  it "should bulk delete documents" do
+    seed_corpus
+    index.bulk_delete([
+      {"_type" => 'tweet', "_id" => 'fooid'},
+      {"_type" => 'tweet', "_id" => 'barid'},
+    ])
+    index.refresh
+    res = index.search({}, {:query => {:match_all => {}}})
+    expect(res.results.map(&:_id)).to match_array ['bazid']
+  end
+
   # TODO: Actually use two indexes
   it "should msearch across the index returning all docs" do
     seed_corpus
