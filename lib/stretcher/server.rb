@@ -11,8 +11,8 @@ module Stretcher
 
         builder.request :json
 
-        builder.options[:read_timeout] = 4 || options[:read_timeout]
-        builder.options[:open_timeout] = 2 || options[:open_timeout]
+        builder.options[:read_timeout] = options[:read_timeout] || 4
+        builder.options[:open_timeout] = options[:open_timeout] || 2
 
         if faraday_configurator = options[:faraday_configurator]
           faraday_configurator.call(builder)
