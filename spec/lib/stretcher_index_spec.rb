@@ -75,11 +75,24 @@ describe Stretcher::Index do
     index.get_settings['foo']['settings']['index.number_of_replicas'].should eq("0")
   end
 
-  it "should bulk index documents properly" do
-    seed_corpus
-    corpus.each {|doc|
-      index.type(doc["_type"]).get(doc["_id"] || doc["id"]).text.should == doc[:text]
-    }
+  describe "bulk operations" do
+    it "should bulk index documents properly" do
+      seed_corpus
+      corpus.each {|doc|
+        index.type(doc["_type"]).get(doc["_id"] || doc["id"]).text.should == doc[:text]
+      }
+    end
+
+    it "should bulk delete documents" do
+      seed_corpus
+      index.bulk_delete([
+                         {"_type" => 'tweet', "_id" => 'fooid'},
+                         {"_type" => 'tweet', "_id" => 'barid'},
+                        ])
+      index.refresh
+      res = index.search({}, {:query => {:match_all => {}}})
+      expect(res.results.map(&:_id)).to match_array ['bazid']
+    end
   end
 
   it "should delete by query" do
@@ -96,17 +109,6 @@ describe Stretcher::Index do
     index.refresh
     res = index.search({}, {:query => {:match => {:text => match_text}}})
     res.results.first.text.should == match_text
-  end
-
-  it "should bulk delete documents" do
-    seed_corpus
-    index.bulk_delete([
-      {"_type" => 'tweet', "_id" => 'fooid'},
-      {"_type" => 'tweet', "_id" => 'barid'},
-    ])
-    index.refresh
-    res = index.search({}, {:query => {:match_all => {}}})
-    expect(res.results.map(&:_id)).to match_array ['bazid']
   end
 
   # TODO: Actually use two indexes
