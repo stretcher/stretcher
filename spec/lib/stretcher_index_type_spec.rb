@@ -86,15 +86,15 @@ describe Stretcher::IndexType do
 
       describe 'with options' do
         it 'should add options without putting them in _source' do
-          type.put(987, @doc, version: 1)
-          docv2 = type.get(987, {}, raw: true)
+          type.put(987, @doc, :version => 1)
+          docv2 = type.get(987, {}, :raw => true)
           docv2._version.should == 2
           docv2._source._version.should be_nil
         end
 
         it 'adds options to _source when they are part of the doc' do
-          type.put(987, @doc.merge(_version: 1))
-          docv2 = type.get(987, {}, raw: true)
+          type.put(987, @doc.merge(:_version => 1))
+          docv2 = type.get(987, {}, :raw => true)
           docv2._version.should == 2
           docv2._source._version.should == 1
         end

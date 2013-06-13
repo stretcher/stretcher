@@ -196,7 +196,7 @@ module Stretcher
             body = "-d '#{req.body.is_a?(Hash) ? req.body.to_json : req.body}'"
             headers = req.headers.map do |name,value|
               "'-H #{name}: #{value}'"
-            end.join(' ')
+            end.sort.join(' ')
             logger.debug "curl -X#{method.to_s.upcase} '#{Util.qurl(url,query_opts)}' #{body} #{headers}"
           end
         else
