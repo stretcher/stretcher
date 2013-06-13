@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Stretcher::Server do
-  let(:server) { Stretcher::Server.new(ES_URL) }
+  let(:server) { Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER) }
 
   it "should initialize cleanly" do
     server.class.should == Stretcher::Server
@@ -38,8 +38,6 @@ describe Stretcher::Server do
   end
 
   it "should perform alias operations properly" do
-    # Tear down any leftovers from previous runs
-    server.aliases(:actions => [{:remove => {:alias => :foo_alias}}]) if server.index(:foo_alias).exists?
     server.index(:foo).delete if server.index(:foo).exists?
     server.index(:foo).create
     server.aliases(:actions => [{:add => {:index => :foo, :alias => :foo_alias}}])
@@ -77,13 +75,9 @@ describe Stretcher::Server do
   end
 
   it 'logs requests correctly' do
-    server = Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER)
-    block_output = nil
     server.logger.should_receive(:debug) do |&block|
-      block_output = block.call
+      block.call.should == %{curl -XGET http://localhost:9200/_analyze?analyzer=snowball -d 'Candles' '-H Accept: application/json' '-H Content-Type: application/json' '-H User-Agent: Stretcher Ruby Gem #{Stretcher::VERSION}'}
     end
-    analyzed = server.analyze("Candles", :analyzer => :snowball)
-    block_output.should == %{curl -XGET '#{ES_URL}/_analyze?analyzer=snowball'  -H 'User-Agent: Faraday v#{Faraday::VERSION}' -d 'Candles'}
-
+    server.analyze("Candles", :analyzer => :snowball)
   end
 end

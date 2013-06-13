@@ -1,19 +1,10 @@
 require 'spec_helper'
 
 describe Stretcher::IndexType do
-  let(:server) { Stretcher::Server.new(ES_URL) }
-  let(:index) {
-    i = server.index(:foo)
-    i
-  }
-  let(:type) {
-    t = index.type(:bar)
-    t.delete_query(:match_all => {})
-    index.refresh
-    mapping = {"bar" => {"properties" => {"message" => {"type" => "string"}}}}
-    t.put_mapping mapping
-    t
-  }
+  let(:server) { Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER) }
+  let(:index) { server.index(:foo) }
+  
+  let(:type) {  index.type(:bar) }
 
   it "should be existentially aware" do
     t = index.type(:existential)
@@ -24,9 +15,16 @@ describe Stretcher::IndexType do
     t.get_mapping.should == mapping
   end
 
+  before do
+    type.delete_query(:match_all => {})
+    index.refresh
+    type.put_mapping({"bar" => {"properties" => {"message" => {"type" => "string"}}}})
+  end
+
   describe "searching" do
     before do
       @doc = {:message => "hello"}
+
       type.put(123123, @doc)
       index.refresh
     end
@@ -67,6 +65,12 @@ describe Stretcher::IndexType do
       type.mget([988, 989]).docs.first._source.message.should == 'message one!'
       type.mget([988, 989]).docs.last._source.message.should == 'message two!'
     end
+
+    it 'allows options to be passed through' do
+      response = type.mget([988, 989], :fields => 'message')
+      response.docs.first.fields.message.should == 'message one!'
+      response.docs.last.fields.message.should == 'message two!'
+    end
   end
 
   describe "ops on individual docs" do
@@ -76,28 +80,12 @@ describe Stretcher::IndexType do
     end
     
     describe "put" do
-      it "should put correctly" do
-        @put_res.should_not be_nil
+      it "should put correctly, with options" do
+        type.put(987, @doc, :version_type => :external, :version => 42)._version.should == 42
       end
 
-      it "should post correctly" do
-        type.post(@doc).should_not be_nil
-      end
-
-      describe 'with options' do
-        it 'should add options without putting them in _source' do
-          type.put(987, @doc, :version => 1)
-          docv2 = type.get(987, {}, :raw => true)
-          docv2._version.should == 2
-          docv2._source._version.should be_nil
-        end
-
-        it 'adds options to _source when they are part of the doc' do
-          type.put(987, @doc.merge(:_version => 1))
-          docv2 = type.get(987, {}, :raw => true)
-          docv2._version.should == 2
-          docv2._source._version.should == 1
-        end
+      it "should post correctly, with options" do
+        type.post(@doc, :version_type => :external, :version => 42)._version.should == 42
       end
     end
 
@@ -143,16 +131,33 @@ describe Stretcher::IndexType do
       end
     end
     
-    it "should explain a query" do
-      type.exists?(987).should be_true
-      index.refresh
-      res = type.explain(987, {:query => {:match_all => {}}})
-      res.should have_key('explanation')
+    describe 'explain' do
+      it "should explain a query" do
+        type.exists?(987).should be_true
+        index.refresh
+        res = type.explain(987, {:query => {:match_all => {}}})
+        res.should have_key('explanation')
+      end
+
+      it 'should allow options to be passed through' do
+        index.refresh
+        type.explain(987, {:query => {:match_all => {}}}, {:fields => 'message'}).get.fields.message.should == 'hello!'
+      end
     end
     
-    it "should update individual docs correctly" do
+    it "should update individual docs correctly using ctx.source" do
       type.update(987, :script => "ctx._source.message = 'Updated!'")
       type.get(987).message.should == 'Updated!'
+    end
+
+    it "should update individual docs correctly using doc" do
+      type.update(987, :doc => {:message => 'Updated!'})
+      type.get(987).message.should == 'Updated!'
+    end
+
+    it "should update individual docs correctly using doc and fields" do
+      response =  type.update(987, {:doc => {:message => 'Updated!'}}, :fields => 'message')
+      response.get.fields.message.should == 'Updated!'      
     end
 
     it "should delete by query correctly" do
@@ -164,6 +169,13 @@ describe Stretcher::IndexType do
     it "should delete individual docs correctly" do
       type.exists?(987).should be_true
       type.delete(987)
+      type.exists?(987).should be_false
+    end
+
+    it "should allow params to be passed to delete" do
+      version = type.get(987, {},  true)._version
+      lambda { type.delete(987, :version => version + 1) }.should raise_exception
+      type.delete(987, :version => version)
       type.exists?(987).should be_false
     end
   end

@@ -20,6 +20,11 @@ module Stretcher
           builder.adapter :excon
         end
       end
+      http.headers = {
+        :accept =>  'application/json',
+        :user_agent => "Stretcher Ruby Gem #{Stretcher::VERSION}",
+        "Content-Type" => "application/json"
+      }
 
       uri_components = URI.parse(uri)
       if uri_components.user || uri_components.password
@@ -91,7 +96,7 @@ module Stretcher
     # Perform a raw bulk operation. You probably want to use Stretcher::Index#bulk_index
     # which properly formats a bulk index request.
     def bulk(data)
-      request(:post, path_uri("/_bulk"), data)
+      request(:post, path_uri("/_bulk"),{}, data)
     end
 
     # Retrieves stats for this server
@@ -161,7 +166,7 @@ module Stretcher
     # as per: http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases.html
     def aliases(body=nil)
       if body
-        request(:post, path_uri("/_aliases"), body)
+        request(:post, path_uri("/_aliases"), {}, body)
       else
         request(:get, path_uri("/_aliases"))
       end
@@ -176,23 +181,17 @@ module Stretcher
     def path_uri(path=nil)
       @uri.to_s + path.to_s
     end
-    
-    QOPT_METHODS = [:get, :head, :delete]
-    def request(method, path=nil, qopts_or_body=nil, headers=nil, &block)
+
+    # Handy way to query the server, returning *only* the body
+    # Will raise an exception when the status is not in the 2xx range    
+    def request(method, path, params={}, body=nil, headers={}, &block)
       req = http.build_request(method)
       req.path = path
-      
-      if qopts_or_body && QOPT_METHODS.include?(method)
-        req.params.update(qopts_or_body)
-      else
-        req.body = qopts_or_body
-        # Default content type to json, the block can change this of course
-        req.headers["Content-Type"] = 'application/json'
-      end
-
+      req.params.update(Util.clean_params(params)) if params
+      req.body = body if body
+      req.headers.update(headers) if headers
       block.call(req) if block
-      
-      logger.debug { Util.curl_format(http, req) }
+      logger.debug { Util.curl_format(req) }
 
       @request_mtx.synchronize {
         env = req.to_env(http)
@@ -201,7 +200,8 @@ module Stretcher
     end
 
     private
-    
+
+
     # Internal use only
     # Check response codes from request
     def check_response(res)

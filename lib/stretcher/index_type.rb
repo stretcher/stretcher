@@ -26,42 +26,29 @@ module Stretcher
         options = {}
       end
       
-      # If fields is passed in as an array, properly encode it
-      arg_fields = options[:fields]
-      if arg_fields.is_a?(Array)
-        # no #merge! we don't want to mutate args
-        options = options.merge(:fields => arg_fields.join(","))
-      end
-      
       res = request(:get, id, options)
       raw ? res : (res["_source"] || res["fields"])
     end
 
     # Retrieves multiple documents of the index type by ID
     # http://www.elasticsearch.org/guide/reference/api/multi-get/
-    def mget(ids)
-      request(:get, '_mget') do |req|
-        req.body = { :ids => ids }
-      end
+    def mget(ids, options={})
+      request(:get, '_mget', options, :ids => ids)
     end
 
     # Explains a query for a specific document
-    def explain(id, query)
-      request(:get, "#{id}/_explain") do |req|
-        req.body = query
-      end
+    def explain(id, query, options={})
+      request(:get, "#{id}/_explain", options, query)
     end
 
     # Index an item with a specific ID
     def put(id, source, options={})
-      request(:put, id, options) do |req|
-        req.body = source
-      end
+      request(:put, id, options, source)
     end
 
     # Index an item with automatic ID generation
-    def post(source)
-      request(:post, nil, source)
+    def post(source, options={})
+      request(:post, nil, options, source)
     end
 
     # Uses the update api to modify a document with a script
@@ -71,12 +58,12 @@ module Stretcher
     # Takes an optional, third options hash, allowing you to specify
     # Additional query parameters such as +fields+ and +routing+
     def update(id, body, options={})
-      request(:post, Util.qurl("#{id}/_update", options), body)
+      request(:post, "#{id}/_update", options, body)
     end
 
     # Deletes the document with the given ID
-    def delete(id)
-      request :delete, id
+    def delete(id, options={})
+      request :delete, id, options
     rescue Stretcher::RequestError => e
       raise e if e.http_response.status != 404
       false
@@ -96,7 +83,7 @@ module Stretcher
 
     # Alter the mapping for this type
     def put_mapping(body)
-      request(:put, "_mapping", body)
+      request(:put, "_mapping", {}, body)
     end
 
     # Check if this index type is defined, if passed an id
