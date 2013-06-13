@@ -100,25 +100,35 @@ describe Stretcher::Index do
 
   # TODO: Actually use two indexes
   describe "msearch" do
-    before do
+    let(:res) {
       seed_corpus
       q2_text = corpus.first[:text]
       queries = [
                  {:query => {:match_all => {}}},
                  {:query => {:match => {:text => q2_text}}}
                 ]
-      @res = index.msearch(queries)
-    end
+      index.msearch(queries)
+    }
     
     it "should return an array of Stretcher::SearchResults" do
-      @res.length.should == 2
-      @res[0].class.should == Stretcher::SearchResults
+      res.length.should == 2
+      res[0].class.should == Stretcher::SearchResults
     end
 
     it "should return the query results in order" do
       # First query returns all docs, second only one
-      @res[0].results.length.should == corpus.length
-      @res[1].results.length.should == 1
+      res[0].results.length.should == corpus.length
+      res[1].results.length.should == 1
+    end
+
+    it "should raise an error if any query is bad" do
+      queries = [
+                 {:query => {:match_all => {}}},
+                 {:query => {:invalid_query => {}}}
+                ]
+      expect {
+        index.msearch(queries)
+      }.to raise_error(Stretcher::RequestError)
     end
   end
 
