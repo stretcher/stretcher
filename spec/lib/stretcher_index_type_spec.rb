@@ -72,6 +72,12 @@ describe Stretcher::IndexType do
       type.mget([988, 989]).docs.first._source.message.should == 'message one!'
       type.mget([988, 989]).docs.last._source.message.should == 'message two!'
     end
+
+    it 'allows options to be passed through' do
+      response = type.mget([988, 989], :fields => 'message')
+      response.docs.first.fields.message.should == 'message one!'
+      response.docs.last.fields.message.should == 'message two!'
+    end
   end
 
   describe "ops on individual docs" do

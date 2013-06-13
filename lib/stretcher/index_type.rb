@@ -39,10 +39,8 @@ module Stretcher
 
     # Retrieves multiple documents of the index type by ID
     # http://www.elasticsearch.org/guide/reference/api/multi-get/
-    def mget(ids)
-      request(:get, '_mget') do |req|
-        req.body = { :ids => ids }
-      end
+    def mget(ids, options={})
+      request(:get, '_mget', options, :ids => ids)
     end
 
     # Explains a query for a specific document
