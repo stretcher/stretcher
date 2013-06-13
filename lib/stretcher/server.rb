@@ -95,8 +95,8 @@ module Stretcher
     
     # Perform a raw bulk operation. You probably want to use Stretcher::Index#bulk_index
     # which properly formats a bulk index request.
-    def bulk(data)
-      request(:post, path_uri("/_bulk"),{}, data)
+    def bulk(data, options={})
+      request(:post, path_uri("/_bulk"), options, data)
     end
 
     # Retrieves stats for this server
