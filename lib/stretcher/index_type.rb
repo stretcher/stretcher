@@ -26,13 +26,6 @@ module Stretcher
         options = {}
       end
       
-      # If fields is passed in as an array, properly encode it
-      arg_fields = options[:fields]
-      if arg_fields.is_a?(Array)
-        # no #merge! we don't want to mutate args
-        options = options.merge(:fields => arg_fields.join(","))
-      end
-      
       res = request(:get, id, options)
       raw ? res : (res["_source"] || res["fields"])
     end

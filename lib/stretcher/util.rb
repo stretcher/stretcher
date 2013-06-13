@@ -19,5 +19,15 @@ module Stretcher
     def self.querify(hash)
       hash.map {|k,v| "#{k}=#{v}"}.join('&')
     end
+
+    def self.clean_params params={}
+      return unless params
+      clean_params = {}
+      params.each do |key, value|
+        clean_params[key] = value.is_a?(Array) ? value.join(',') : value
+      end
+      clean_params
+    end
+
   end
 end

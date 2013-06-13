@@ -187,7 +187,7 @@ module Stretcher
     def request(method, path, params={}, body=nil, headers={}, &block)
       req = http.build_request(method)
       req.path = path
-      req.params.update(params) if params
+      req.params.update(Util.clean_params(params)) if params
       req.body = body if body
       req.headers.update(headers) if headers
       block.call(req) if block
