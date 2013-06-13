@@ -138,11 +138,18 @@ describe Stretcher::IndexType do
       end
     end
     
-    it "should explain a query" do
-      type.exists?(987).should be_true
-      index.refresh
-      res = type.explain(987, {:query => {:match_all => {}}})
-      res.should have_key('explanation')
+    describe 'explain' do
+      it "should explain a query" do
+        type.exists?(987).should be_true
+        index.refresh
+        res = type.explain(987, {:query => {:match_all => {}}})
+        res.should have_key('explanation')
+      end
+
+      it 'should allow options to be passed through' do
+        index.refresh
+        type.explain(987, {:query => {:match_all => {}}}, {:fields => 'message'}).get.fields.message.should == 'hello!'
+      end
     end
     
     it "should update individual docs correctly using ctx.source" do

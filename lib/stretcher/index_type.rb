@@ -44,10 +44,8 @@ module Stretcher
     end
 
     # Explains a query for a specific document
-    def explain(id, query)
-      request(:get, "#{id}/_explain") do |req|
-        req.body = query
-      end
+    def explain(id, query, options={})
+      request(:get, "#{id}/_explain", options, query)
     end
 
     # Index an item with a specific ID
