@@ -1,5 +1,17 @@
 module Stretcher
   module Util
+    
+    # cURL formats a Faraday req. Useful for logging
+    def self.curl_format(req)
+      body = "-d '#{req.body.is_a?(Hash) ? req.body.to_json : req.body}'" if req.body
+      headers = req.headers.map {|name, value| "'-H #{name}: #{value}'" }.sort.join(' ')
+      method = req.method.to_s.upcase
+      url = Util.qurl(req.path,req.params)
+      
+      ["curl -X#{method}", url, body, headers].compact.join(' ')  
+    end
+
+    # Formats a url + query opts
     def self.qurl(url, query_opts=nil)
       query_opts && !query_opts.empty? ? "#{url}?#{querify(query_opts)}" : url
     end

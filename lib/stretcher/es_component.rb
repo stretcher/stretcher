@@ -27,7 +27,7 @@ module Stretcher
       request(:post, "_refresh")
     end
 
-    def request(method, path=nil, params={}, body={}, headers={}, &block)
+    def request(method, path=nil, params={}, body=nil, headers={}, &block)
       prefixed_path = path_uri(path)
       raise "Cannot issue request, no server specified!" unless @server
       @server.request(method, prefixed_path, params, body, headers, &block)

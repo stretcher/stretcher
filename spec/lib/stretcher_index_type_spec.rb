@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Stretcher::IndexType do
-  let(:server) { Stretcher::Server.new(ES_URL) }
+  let(:server) { Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER) }
   let(:index) {
     i = server.index(:foo)
     i

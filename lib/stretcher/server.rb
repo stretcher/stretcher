@@ -20,6 +20,11 @@ module Stretcher
           builder.adapter :excon
         end
       end
+      http.headers = {
+        accept:  'application/json',
+        user_agent: "Stretcher Ruby Gem #{Stretcher::VERSION}",
+        "Content-Type" => "application/json"
+      }
 
       uri_components = URI.parse(uri)
       if uri_components.user || uri_components.password
@@ -91,9 +96,7 @@ module Stretcher
     # Perform a raw bulk operation. You probably want to use Stretcher::Index#bulk_index
     # which properly formats a bulk index request.
     def bulk(data)
-      request(:post, path_uri("/_bulk")) do |req|
-        req.body = data
-      end
+      request(:post, path_uri("/_bulk"),{}, data)
     end
 
     # Retrieves stats for this server
@@ -163,9 +166,7 @@ module Stretcher
     # as per: http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases.html
     def aliases(body=nil)
       if body
-        request(:post, path_uri("/_aliases")) do |req|
-          req.body = body
-        end
+        request(:post, path_uri("/_aliases"), {}, body)
       else
         request(:get, path_uri("/_aliases"))
       end
@@ -182,33 +183,24 @@ module Stretcher
     end
 
     # Handy way to query the server, returning *only* the body
-    # Will raise an exception when the status is not in the 2xx range
-    def request(method, url, params={}, body={}, headers={}, &block)
-      # Our default client is threadsafe, but some others might not be
-      check_response(@request_mtx.synchronize {
-        http.send(method, url, body, headers) do |req|
-          block.call(req) if block_given?
-          req.params = params if params
-  
-          # Default content type to json, the block can change this of course
-          req.headers["Content-Type"] ||= 'application/json'
-          
-          log_request(req)
-        end
-      })
+    # Will raise an exception when the status is not in the 2xx range    
+    def request(method, path, params={}, body=nil, headers={}, &block)
+      req = http.build_request(method)
+      req.path = path
+      req.params.update(params) if params
+      req.body = body if body
+      req.headers.update(headers) if headers
+      block.call(req) if block
+      logger.debug { Util.curl_format(req) }
+      @request_mtx.synchronize {
+        env = req.to_env(http)
+        check_response(http.app.call(env))
+      }
     end
 
-    # Internal use only
-    # Provides debug logging for requests
-    def log_request req
-      return unless logger.debug?
-      body = "-d '#{req.body.is_a?(Hash) ? req.body.to_json : req.body}'"
-      headers = req.headers.map do |name,value|
-        "'-H #{name}: #{value}'"
-      end.sort.join(' ')
-      logger.debug "curl -X#{req.method.to_s.upcase} '#{Util.qurl(req.path,req.params)}' #{body} #{headers}"
-    end
-    
+    private
+
+
     # Internal use only
     # Check response codes from request
     def check_response(res)
