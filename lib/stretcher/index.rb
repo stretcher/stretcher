@@ -39,6 +39,8 @@ module Stretcher
     end
 
     def bulk_action(action, documents, options={})
+      action=action.to_sym
+      
       body = documents.reduce("") {|post_data, d_raw|
         d = Hashie::Mash.new(d_raw)
         index_meta = { :_index => name, :_id => (d.delete(:id) || d.delete(:_id)) }
@@ -48,7 +50,8 @@ module Stretcher
         end
 
         post_data << ({action => index_meta}.to_json + "\n")
-        post_data << (d.to_json + "\n")
+        post_data << (d.to_json + "\n") unless action == :delete
+        post_data
       }
       @server.bulk body, options
     end

@@ -4,6 +4,7 @@ Coveralls.wear!
 require 'rspec'
 require 'stretcher'
 
+File.open("test_logs", 'wb') {|f| f.write("")}
 DEBUG_LOGGER = Logger.new('test_logs')
 DEBUG_LOGGER.level = Logger::DEBUG
 ES_URL = 'http://localhost:9200'
