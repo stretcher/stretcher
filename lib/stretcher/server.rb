@@ -211,7 +211,7 @@ module Stretcher
         raise RequestError::NotFound.new(res), err_str
       else
         err_str = "Error processing request (#{res.status})! #{res.env[:method]} URL: #{res.env[:url]}"
-        err_str << "\n Resp Body: #{res.body}"
+        err_str << "\n Resp Body: #{res.body.to_json}"
         raise RequestError.new(res), err_str
       end
     end
