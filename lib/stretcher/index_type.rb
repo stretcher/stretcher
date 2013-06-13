@@ -69,7 +69,7 @@ module Stretcher
     # Takes an optional, third options hash, allowing you to specify
     # Additional query parameters such as +fields+ and +routing+
     def update(id, body, options={})
-      request(:post, Util.qurl("#{id}/_update", options), body)
+      request(:post, "#{id}/_update", options, body)
     end
 
     # Deletes the document with the given ID

@@ -144,8 +144,13 @@ describe Stretcher::IndexType do
       res.should have_key('explanation')
     end
     
-    it "should update individual docs correctly" do
+    it "should update individual docs correctly using ctx.source" do
       type.update(987, :script => "ctx._source.message = 'Updated!'")
+      type.get(987).message.should == 'Updated!'
+    end
+
+    it "should update individual docs correctly using doc" do
+      type.update(987, :doc => {:message => 'Updated!'})
       type.get(987).message.should == 'Updated!'
     end
 
