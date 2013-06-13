@@ -184,16 +184,23 @@ module Stretcher
     # Handy way to query the server, returning *only* the body
     # Will raise an exception when the status is not in the 2xx range
     def request(method, url=nil, query_opts=nil, *args, &block)
-      logger.info { "Stretcher: Issuing Request #{method.to_s.upcase}, #{Util.qurl(url,query_opts)}" }
       # Our default client is threadsafe, but some others might not be
       check_response(@request_mtx.synchronize {
         if block
           http.send(method, url, query_opts, *args) do |req|
-            # Default content type to json, the block can change this of course
-            req.headers["Content-Type"] = 'application/json' unless req.headers
             block.call(req)
+            # Default content type to json, the block can change this of course
+            req.headers["Content-Type"] ||= 'application/json'
+
+            next unless logger.debug?
+            body = "-d '#{req.body.is_a?(Hash) ? req.body.to_json : req.body}'"
+            headers = req.headers.map do |name,value|
+              "'-H #{name}: #{value}'"
+            end.join(' ')
+            logger.debug "curl -X#{method.to_s.upcase} '#{Util.qurl(url,query_opts)}' #{body} #{headers}"
           end
         else
+          logger.debug "curl -X#{method.to_s.upcase} '#{Util.qurl(url,query_opts)}'"
           http.send(method, url, query_opts, *args)
         end
       })

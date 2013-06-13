@@ -75,4 +75,12 @@ describe Stretcher::Server do
     analyzed = server.analyze("Candles", :analyzer => :snowball)
     analyzed.tokens.first.token.should == 'candl'
   end
+
+  it 'logs requests correctly' do
+    server = Stretcher::Server.new(ES_URL, logger: DEBUG_LOGGER)
+    server.logger.should_receive(:debug).with(
+      %{curl -XGET '#{ES_URL}/_analyze?analyzer=snowball' -d 'Candles' '-H User-Agent: #{"Faraday v#{Faraday::VERSION}"}' '-H Content-Type: application/json'}
+    )
+    analyzed = server.analyze("Candles", :analyzer => :snowball)
+  end
 end
