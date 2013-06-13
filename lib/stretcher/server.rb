@@ -128,12 +128,10 @@ module Stretcher
     def msearch(body=[])
       raise ArgumentError, "msearch takes an array!" unless body.is_a?(Array)
       fmt_body = body.map(&:to_json).join("\n") + "\n"
-      logger.info { "Stretcher msearch: curl -XGET #{uri} -d '#{fmt_body}'" }
-      res = request(:get, path_uri("/_msearch")) {|req|
-        req.body = fmt_body
-      }
+      
+      res = request(:get, path_uri("/_msearch"), {}, fmt_body)
 
-      errors = res.responses.select {|r| r[:error]}.map(&:error)
+      errors = res.responses.map(&:error).compact
       if !errors.empty?
         raise RequestError.new(res), "Could not msearch #{errors.inspect}"
       end

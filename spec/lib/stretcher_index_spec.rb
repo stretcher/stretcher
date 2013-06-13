@@ -99,11 +99,27 @@ describe Stretcher::Index do
   end
 
   # TODO: Actually use two indexes
-  it "should msearch across the index returning all docs" do
-    seed_corpus
-    res = index.msearch([{:query => {:match_all => {}}}])
-    res.length.should == 1
-    res[0].class.should == Stretcher::SearchResults
+  describe "msearch" do
+    before do
+      seed_corpus
+      q2_text = corpus.first[:text]
+      queries = [
+                 {:query => {:match_all => {}}},
+                 {:query => {:match => {:text => q2_text}}}
+                ]
+      @res = index.msearch(queries)
+    end
+    
+    it "should return an array of Stretcher::SearchResults" do
+      @res.length.should == 2
+      @res[0].class.should == Stretcher::SearchResults
+    end
+
+    it "should return the query results in order" do
+      # First query returns all docs, second only one
+      @res[0].results.length.should == corpus.length
+      @res[1].results.length.should == 1
+    end
   end
 
   it "execute the analysis API and return an expected result" do
