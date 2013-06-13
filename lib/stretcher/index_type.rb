@@ -58,8 +58,8 @@ module Stretcher
     end
 
     # Index an item with automatic ID generation
-    def post(source)
-      request(:post, nil, {}, source)
+    def post(source, options={})
+      request(:post, nil, options, source)
     end
 
     # Uses the update api to modify a document with a script

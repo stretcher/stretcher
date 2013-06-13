@@ -27,7 +27,7 @@ describe Stretcher::IndexType do
   before do
     index.delete_query match_all: {}
   end
-  
+
   describe "searching" do
     before do
       @doc = {:message => "hello"}
@@ -81,22 +81,12 @@ describe Stretcher::IndexType do
     end
     
     describe "put" do
-      it "should put correctly" do
-        @put_res.should_not be_nil
+      it "should put correctly, with options" do
+        type.put(987, @doc, :version_type => :external, :version => 42)._version.should == 42
       end
 
-      it "should post correctly" do
-        type.post(@doc).should_not be_nil
-      end
-
-      describe 'with options' do
-        it 'should add options without putting them in _source' do
-          lambda { type.put(987, @doc, :version => 2)}.should raise_exception
-          type.put(987, @doc, :version => 1)
-          docv2 = type.get(987, {}, :raw => true)
-          docv2._version.should == 2
-          docv2._source._version.should be_nil
-        end
+      it "should post correctly, with options" do
+        type.post(@doc, :version_type => :external, :version => 42)._version.should == 42
       end
     end
 
