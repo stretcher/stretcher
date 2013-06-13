@@ -36,6 +36,19 @@ module Stretcher
       }
     end
 
+    # Given a hash of documents, will bulk delete
+    #
+    #    docs = [{"_type" => "tweet", "_id" => 91011}]
+    #    server.index(:foo).bulk_delete(docs)
+    def bulk_delete(documents)
+      @server.bulk documents.reduce("") {|post_data, d_raw|
+        d = Hashie::Mash.new(d_raw)
+        action_meta = {"delete" => {"_index" => name, "_type" => d["_type"], "_id" => d["_id"] || d["id"]}}
+        action_meta["delete"]["_parent"] = d["_parent"] if d["_parent"]
+        post_data << (action_meta.to_json + "\n")
+      }
+    end
+
     # Creates the index, with the supplied hash as the optinos body (usually mappings: and settings:))
     def create(options={})
       request(:put, "/", {}, options)
