@@ -24,9 +24,14 @@ describe Stretcher::IndexType do
     t.get_mapping.should == mapping
   end
 
+  before do
+    index.delete_query match_all: {}
+  end
+  
   describe "searching" do
     before do
       @doc = {:message => "hello"}
+
       type.put(123123, @doc)
       index.refresh
     end
@@ -168,6 +173,13 @@ describe Stretcher::IndexType do
     it "should delete individual docs correctly" do
       type.exists?(987).should be_true
       type.delete(987)
+      type.exists?(987).should be_false
+    end
+
+    it "should allow params to be passed to delete" do
+      type.exists?(987).should be_true
+      lambda { type.delete(987, :version => 2) }.should raise_exception
+      type.delete(987, version: 1)
       type.exists?(987).should be_false
     end
   end

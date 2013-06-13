@@ -73,8 +73,8 @@ module Stretcher
     end
 
     # Deletes the document with the given ID
-    def delete(id)
-      request :delete, id
+    def delete(id, options={})
+      request :delete, id, options
     rescue Stretcher::RequestError => e
       raise e if e.http_response.status != 404
       false
