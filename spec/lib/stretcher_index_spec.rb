@@ -11,7 +11,12 @@ describe Stretcher::Index do
     rescue Stretcher::RequestError::NotFound
     end
     server.refresh
-    i.create
+    i.create({
+      :settings => {
+        :number_of_shards => 1,
+        :number_of_replicas => 0
+      }
+    })
     # Why do both? Doesn't hurt, and it fixes some races
     server.refresh
     i.refresh
@@ -66,7 +71,8 @@ describe Stretcher::Index do
   end
 
   it "should retrieve settings properly" do
-    index.get_settings['foo']['settings']['index.number_of_replicas'].should_not be_nil
+    index.get_settings['foo']['settings']['index.number_of_shards'].should eq("1")
+    index.get_settings['foo']['settings']['index.number_of_replicas'].should eq("0")
   end
 
   it "should bulk index documents properly" do
