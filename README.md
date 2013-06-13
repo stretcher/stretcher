@@ -16,6 +16,7 @@ A concise, fast ElasticSearch client designed to reflect the actual elastic sear
 * Configurable logging
 * Pure, threadsafe, ruby
 * Easily swap HTTP clients via Faraday
+* Tested against Ruby 2.0,1.9,1.8.7, Jruby, and Rubinius
 
 ## Installation
 
