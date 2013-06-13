@@ -27,10 +27,10 @@ module Stretcher
       request(:post, "_refresh")
     end
 
-    def request(method, path=nil, query_opts=nil, *args, &block)
+    def request(method, path=nil, params={}, body={}, headers={}, &block)
       prefixed_path = path_uri(path)
       raise "Cannot issue request, no server specified!" unless @server
-      @server.request(method, prefixed_path, query_opts, *args, &block)
+      @server.request(method, prefixed_path, params, body, headers, &block)
     end
 
     def do_delete_query(query)

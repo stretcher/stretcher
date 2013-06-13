@@ -183,27 +183,30 @@ module Stretcher
 
     # Handy way to query the server, returning *only* the body
     # Will raise an exception when the status is not in the 2xx range
-    def request(method, url=nil, query_opts=nil, *args, &block)
+    def request(method, url, params={}, body={}, headers={}, &block)
       # Our default client is threadsafe, but some others might not be
       check_response(@request_mtx.synchronize {
-        if block
-          http.send(method, url, query_opts, *args) do |req|
-            block.call(req)
-            # Default content type to json, the block can change this of course
-            req.headers["Content-Type"] ||= 'application/json'
-
-            next unless logger.debug?
-            body = "-d '#{req.body.is_a?(Hash) ? req.body.to_json : req.body}'"
-            headers = req.headers.map do |name,value|
-              "'-H #{name}: #{value}'"
-            end.sort.join(' ')
-            logger.debug "curl -X#{method.to_s.upcase} '#{Util.qurl(url,query_opts)}' #{body} #{headers}"
-          end
-        else
-          logger.debug "curl -X#{method.to_s.upcase} '#{Util.qurl(url,query_opts)}'"
-          http.send(method, url, query_opts, *args)
+        http.send(method, url, body, headers) do |req|
+          block.call(req) if block_given?
+          req.params = params if params
+  
+          # Default content type to json, the block can change this of course
+          req.headers["Content-Type"] ||= 'application/json'
+          
+          log_request(req)
         end
       })
+    end
+
+    # Internal use only
+    # Provides debug logging for requests
+    def log_request req
+      return unless logger.debug?
+      body = "-d '#{req.body.is_a?(Hash) ? req.body.to_json : req.body}'"
+      headers = req.headers.map do |name,value|
+        "'-H #{name}: #{value}'"
+      end.sort.join(' ')
+      logger.debug "curl -X#{req.method.to_s.upcase} '#{Util.qurl(req.path,req.params)}' #{body} #{headers}"
     end
     
     # Internal use only
