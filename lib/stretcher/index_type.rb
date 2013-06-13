@@ -96,9 +96,7 @@ module Stretcher
 
     # Alter the mapping for this type
     def put_mapping(body)
-      request(:put, "_mapping") {|req|
-        req.body = body
-      }
+      request(:put, "_mapping", body)
     end
 
     # Check if this index type is defined, if passed an id

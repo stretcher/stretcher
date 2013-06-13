@@ -91,9 +91,7 @@ module Stretcher
     # Perform a raw bulk operation. You probably want to use Stretcher::Index#bulk_index
     # which properly formats a bulk index request.
     def bulk(data)
-      request(:post, path_uri("/_bulk")) do |req|
-        req.body = data
-      end
+      request(:post, path_uri("/_bulk"), data)
     end
 
     # Retrieves stats for this server
@@ -163,9 +161,7 @@ module Stretcher
     # as per: http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases.html
     def aliases(body=nil)
       if body
-        request(:post, path_uri("/_aliases")) do |req|
-          req.body = body
-        end
+        request(:post, path_uri("/_aliases"), body)
       else
         request(:get, path_uri("/_aliases"))
       end
@@ -180,31 +176,31 @@ module Stretcher
     def path_uri(path=nil)
       @uri.to_s + path.to_s
     end
+    
+    QOPT_METHODS = [:get, :head, :delete]
+    def request(method, path=nil, qopts_or_body=nil, headers=nil, &block)
+      req = http.build_request(method)
+      req.path = path
+      
+      if qopts_or_body && QOPT_METHODS.include?(method)
+        req.params.update(qopts_or_body)
+      else
+        req.body = qopts_or_body
+        # Default content type to json, the block can change this of course
+        req.headers["Content-Type"] = 'application/json'
+      end
 
-    # Handy way to query the server, returning *only* the body
-    # Will raise an exception when the status is not in the 2xx range
-    def request(method, url=nil, query_opts=nil, *args, &block)
-      # Our default client is threadsafe, but some others might not be
-      check_response(@request_mtx.synchronize {
-        if block
-          http.send(method, url, query_opts, *args) do |req|
-            block.call(req)
-            # Default content type to json, the block can change this of course
-            req.headers["Content-Type"] ||= 'application/json'
+      block.call(req) if block
+      
+      logger.debug { Util.curl_format(http, req) }
 
-            next unless logger.debug?
-            body = "-d '#{req.body.is_a?(Hash) ? req.body.to_json : req.body}'"
-            headers = req.headers.map do |name,value|
-              "'-H #{name}: #{value}'"
-            end.sort.join(' ')
-            logger.debug "curl -X#{method.to_s.upcase} '#{Util.qurl(url,query_opts)}' #{body} #{headers}"
-          end
-        else
-          logger.debug "curl -X#{method.to_s.upcase} '#{Util.qurl(url,query_opts)}'"
-          http.send(method, url, query_opts, *args)
-        end
-      })
+      @request_mtx.synchronize {
+        env = req.to_env(http)
+        check_response(http.app.call(env))
+      }
     end
+
+    private
     
     # Internal use only
     # Check response codes from request

@@ -78,9 +78,12 @@ describe Stretcher::Server do
 
   it 'logs requests correctly' do
     server = Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER)
-    server.logger.should_receive(:debug).with(
-      %{curl -XGET '#{ES_URL}/_analyze?analyzer=snowball' -d 'Candles' '-H Content-Type: application/json' '-H User-Agent: #{"Faraday v#{Faraday::VERSION}"}'}
-    )
+    block_output = nil
+    server.logger.should_receive(:debug) do |&block|
+      block_output = block.call
+    end
     analyzed = server.analyze("Candles", :analyzer => :snowball)
+    block_output.should == %{curl -XGET '#{ES_URL}/_analyze?analyzer=snowball'  -H 'User-Agent: Faraday v#{Faraday::VERSION}' -d 'Candles'}
+
   end
 end

@@ -38,9 +38,7 @@ module Stretcher
 
     # Creates the index, with the supplied hash as the optinos body (usually mappings: and settings:))
     def create(options={})
-      request(:put) do |req|
-        req.body = options
-      end
+      request(:put, "/", options)
     end
 
     # Deletes the index
