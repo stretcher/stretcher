@@ -185,7 +185,6 @@ module Stretcher
     # Will raise an exception when the status is not in the 2xx range
     def request(method, url=nil, query_opts=nil, *args, &block)
       logger.info { "Stretcher: Issuing Request #{method.to_s.upcase}, #{Util.qurl(url,query_opts)}" }
-      
       # Our default client is threadsafe, but some others might not be
       check_response(@request_mtx.synchronize {
         if block

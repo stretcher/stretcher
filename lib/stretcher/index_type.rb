@@ -53,8 +53,10 @@ module Stretcher
     end
 
     # Index an item with a specific ID
-    def put(id, source)
-      request(:put, id, source)
+    def put(id, source, options={})
+      request(:put, id, options) do |req|
+        req.body = source
+      end
     end
 
     # Index an item with automatic ID generation
