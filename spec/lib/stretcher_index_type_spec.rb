@@ -154,6 +154,11 @@ describe Stretcher::IndexType do
       type.get(987).message.should == 'Updated!'
     end
 
+    it "should update individual docs correctly using doc and fields" do
+      response =  type.update(987, {:doc => {:message => 'Updated!'}}, :fields => 'message')
+      response.get.fields.message.should == 'Updated!'      
+    end
+
     it "should delete by query correctly" do
       type.delete_query("match_all" => {})
       index.refresh
