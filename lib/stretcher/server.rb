@@ -21,8 +21,8 @@ module Stretcher
         end
       end
       http.headers = {
-        accept:  'application/json',
-        user_agent: "Stretcher Ruby Gem #{Stretcher::VERSION}",
+        :accept =>  'application/json',
+        :user_agent => "Stretcher Ruby Gem #{Stretcher::VERSION}",
         "Content-Type" => "application/json"
       }
 
@@ -192,6 +192,7 @@ module Stretcher
       req.headers.update(headers) if headers
       block.call(req) if block
       logger.debug { Util.curl_format(req) }
+
       @request_mtx.synchronize {
         env = req.to_env(http)
         check_response(http.app.call(env))

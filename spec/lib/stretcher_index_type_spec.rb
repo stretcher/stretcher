@@ -2,18 +2,9 @@ require 'spec_helper'
 
 describe Stretcher::IndexType do
   let(:server) { Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER) }
-  let(:index) {
-    i = server.index(:foo)
-    i
-  }
-  let(:type) {
-    t = index.type(:bar)
-    t.delete_query(:match_all => {})
-    index.refresh
-    mapping = {"bar" => {"properties" => {"message" => {"type" => "string"}}}}
-    t.put_mapping mapping
-    t
-  }
+  let(:index) { server.index(:foo) }
+  
+  let(:type) {  index.type(:bar) }
 
   it "should be existentially aware" do
     t = index.type(:existential)
@@ -25,7 +16,9 @@ describe Stretcher::IndexType do
   end
 
   before do
-    index.delete_query match_all: {}
+    type.delete_query(:match_all => {})
+    index.refresh
+    type.put_mapping({"bar" => {"properties" => {"message" => {"type" => "string"}}}})
   end
 
   describe "searching" do
@@ -180,9 +173,9 @@ describe Stretcher::IndexType do
     end
 
     it "should allow params to be passed to delete" do
-      type.exists?(987).should be_true
-      lambda { type.delete(987, :version => 2) }.should raise_exception
-      type.delete(987, version: 1)
+      version = type.get(987, {},  true)._version
+      lambda { type.delete(987, :version => version + 1) }.should raise_exception
+      type.delete(987, :version => version)
       type.exists?(987).should be_false
     end
   end
