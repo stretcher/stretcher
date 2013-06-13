@@ -78,8 +78,37 @@ describe Stretcher::Index do
   it "should bulk index documents properly" do
     seed_corpus
     corpus.each {|doc|
-      index.type(doc["_type"]).get(doc["_id"] || doc["id"]).text.should == doc[:text]
+      fetched_doc = index.type(doc["_type"]).get(doc["_id"] || doc["id"], {}, true)
+      fetched_doc._source.text.should == doc[:text]
+      fetched_doc._source._id.should be_nil
+      fetched_doc._source._type.should be_nil
     }
+  end
+
+  it 'allows _routing to be set on bulk index documents' do
+    server.index(:with_routing).delete if server.index(:with_routing).exists?
+    server.index(:with_routing).create({
+      :settings => {
+        :number_of_shards => 1,
+        :number_of_replicas => 0
+      },
+      :mappings => {
+        :_default_ =>  {
+          :_routing => { :required => true }
+        }
+      }
+    })
+
+    lambda {server.index(:with_routing).bulk_index(corpus)}.should raise_exception
+    routed_corpus = corpus.map do |doc|
+      routed_doc = doc.clone
+      routed_doc['_routing'] = 'abc'
+      routed_doc
+    end
+
+    server.index(:with_routing).bulk_index(routed_corpus)
+
+    server.index(:with_routing).delete
   end
 
   it "should delete by query" do
