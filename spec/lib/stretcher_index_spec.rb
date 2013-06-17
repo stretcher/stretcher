@@ -23,10 +23,11 @@ describe Stretcher::Index do
     i
   }
   let(:corpus) {
+    # underscore field that are not system fields should make it through to _source
     [
-     {:text => "Foo", "_type" => 'tweet', "_id" => 'fooid'},
-     {:text => "Bar", "_type" => 'tweet', "_id" => 'barid'},
-     {:text => "Baz", "_type" => 'tweet', "id" => 'bazid'} # Note we support both _id and id
+     {:text => "Foo", :_text => '_Foo', "_type" => 'tweet', "_id" => 'fooid'},
+     {:text => "Bar", :_text => '_Bar', "_type" => 'tweet', "_id" => 'barid'},
+     {:text => "Baz", :_text => '_Baz', "_type" => 'tweet', "id" => 'bazid'} # Note we support both _id and id
     ]
   }
 
@@ -81,6 +82,7 @@ describe Stretcher::Index do
       corpus.each {|doc|
         fetched_doc = index.type(doc["_type"]).get(doc["_id"] || doc["id"], {}, true)
         fetched_doc._source.text.should == doc[:text]
+        fetched_doc._source._text.should == doc[:_text]
         fetched_doc._source._id.should be_nil
         fetched_doc._source._type.should be_nil
       }
