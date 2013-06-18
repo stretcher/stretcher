@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 describe Stretcher::Server do
-  let(:server) { Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER, :log_level => :warn) }
+  let(:server) { Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER) }
 
   it "should initialize cleanly" do
     server.class.should == Stretcher::Server
   end
 
   it 'sets log level from options' do
-    server = Stretcher::Server.new(ES_URL, :log_level => :INFO)
+    server = Stretcher::Server.new(ES_URL, :log_level => :info)
     server.logger.level.should == Logger::INFO
   end
 

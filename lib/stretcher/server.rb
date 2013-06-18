@@ -37,24 +37,13 @@ module Stretcher
     # Internal use only.
     # Builds a logger when initializing an instance
     def self.build_logger(options)
-      logger = nil
-
-      if options[:logger]
-        logger = options[:logger]
-      else
-        logger = Logger.new(STDOUT)
-      end
-      logger.level = case options[:log_level].to_s.downcase
-                     when 'info' then Logger::INFO
-                     when 'warn' then Logger::WARN
-                     else
-                       Logger::DEBUG
-                     end
+      logger = options[:logger] || Logger.new(STDOUT)
+      log_level = options[:log_level] || :debug
+      logger.level = Logger.const_get(log_level.upcase)
 
       logger.formatter = proc do |severity, datetime, progname, msg|
         "[Stretcher][#{severity}]: #{msg}\n"
       end
-
       logger
     end
 
