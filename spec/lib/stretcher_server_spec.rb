@@ -1,10 +1,15 @@
 require 'spec_helper'
 
 describe Stretcher::Server do
-  let(:server) { Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER) }
+  let(:server) { Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER, :log_level => :warn) }
 
   it "should initialize cleanly" do
     server.class.should == Stretcher::Server
+  end
+
+  it 'sets log level from options' do
+    server = Stretcher::Server.new(ES_URL, :log_level => :INFO)
+    server.logger.level.should == Logger::INFO
   end
 
   it "should support the block friendly 'with_server'" do
@@ -80,4 +85,5 @@ describe Stretcher::Server do
     end
     server.analyze("Candles", :analyzer => :snowball)
   end
+
 end
