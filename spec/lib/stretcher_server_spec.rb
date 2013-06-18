@@ -7,6 +7,11 @@ describe Stretcher::Server do
     server.class.should == Stretcher::Server
   end
 
+  it 'sets log level from options' do
+    server = Stretcher::Server.new(ES_URL, :log_level => :info)
+    server.logger.level.should == Logger::INFO
+  end
+
   it "should support the block friendly 'with_server'" do
     exposed = nil
     res = Stretcher::Server.with_server() {|s|
@@ -80,4 +85,5 @@ describe Stretcher::Server do
     end
     server.analyze("Candles", :analyzer => :snowball)
   end
+
 end
