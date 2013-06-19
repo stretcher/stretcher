@@ -180,7 +180,7 @@ module Stretcher
       req = http.build_request(method)
       req.path = path
       req.params.update(Util.clean_params(params)) if params
-      req.body = body if body
+      req.body = body
       req.headers.update(headers) if headers
       block.call(req) if block
       logger.debug { Util.curl_format(req) }
