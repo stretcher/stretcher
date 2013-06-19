@@ -39,7 +39,7 @@ module Stretcher
     def self.build_logger(options)
       logger = options[:logger] || Logger.new(STDOUT)
       log_level = options[:log_level] || :debug
-      logger.level = Logger.const_get(log_level.upcase)
+      logger.level = Logger.const_get(log_level.to_s.upcase)
 
       logger.formatter = proc do |severity, datetime, progname, msg|
         "[Stretcher][#{severity}]: #{msg}\n"
