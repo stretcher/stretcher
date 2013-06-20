@@ -109,6 +109,7 @@ Specs may be run with `rake spec`
 * [@chatgris](https://github.com/chatgris)
 * [@alpinegizmo](https://github.com/alpinegizmo)
 * [@mcolyer](https://github.com/mcolyer)
+* [@mulderp](https://github.com/mulderp)
 
 ## Contributing
 

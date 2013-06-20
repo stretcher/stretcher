@@ -44,9 +44,10 @@ module Stretcher
       body = documents.reduce("") {|post_data, d_raw|
         d = Hashie::Mash.new(d_raw)
         index_meta = { :_index => name, :_id => (d.delete(:id) || d.delete(:_id)) }
-        
+
+        system_fields = %w{_type _parent _routing}
         d.keys.reduce(index_meta) do |memo, key|
-          index_meta[key] = d.delete(key) if key.to_s.start_with?('_')
+          index_meta[key] = d.delete(key) if system_fields.include?(key.to_s)
         end
 
         post_data << ({action => index_meta}.to_json + "\n")
@@ -56,9 +57,9 @@ module Stretcher
       @server.bulk body, options
     end
 
-    # Creates the index, with the supplied hash as the optinos body (usually mappings: and settings:))
-    def create(options={})
-      request(:put, "/", {}, options)
+    # Creates the index, with the supplied hash as the options body (usually mappings: and settings:))
+    def create(options=nil)
+      request(:put, nil, nil, options)
     end
 
     # Deletes the index
@@ -94,7 +95,7 @@ module Stretcher
     rescue Stretcher::RequestError::NotFound
       false
     end
-    
+
     # Delete documents by a given query.
     # Per: http://www.elasticsearch.org/guide/reference/api/delete-by-query.html
     def delete_query(query)
