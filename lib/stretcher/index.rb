@@ -66,6 +66,13 @@ module Stretcher
       request :delete
     end
 
+    # Takes a collection of hashes of the form {:_type => 'foo', :_id => 123}
+    # And issues an mget for them within the current index
+    def mget(meta_docs)
+      merge_data = {:_index => name}
+      @server.mget(meta_docs.map {|d| d.merge(merge_data) })
+    end
+
     # Retrieves stats for this index
     def stats
       request :get, "_stats"

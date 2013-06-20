@@ -26,7 +26,10 @@ describe Stretcher::Index do
     [
      {:text => "Foo", "_type" => 'tweet', "_id" => 'fooid'},
      {:text => "Bar", "_type" => 'tweet', "_id" => 'barid'},
-     {:text => "Baz", "_type" => 'tweet', "id" => 'bazid'} # Note we support both _id and id
+     {:text => "Baz", "_type" => 'tweet', "id" => 'bazid'}, # Note we support both _id and id
+     {:username => "john", age: 25, "_type" => 'user', "_id" => 'fooid'},
+     {:username => "jacob", age: 32, "_type" => 'user', "_id" => 'barid'},
+     {:username => "jingleheimer", age: 54, "_type" => 'user', "id" => 'bazid'} # Note we support both _id and id
     ]
   }
 
@@ -35,8 +38,15 @@ describe Stretcher::Index do
     index.type(:tweet).put_mapping(mdata)
   end
 
+  def create_user_mapping
+    mdata = {:user => {:properties => {:username => {:type => :string}, 
+                                       :age => {:type => :integer}}}}
+    index.type(:user).put_mapping(mdata)
+  end
+
   def seed_corpus
     create_tweet_mapping
+    create_user_mapping
     index.bulk_index(corpus)
     index.refresh
   end
@@ -56,6 +66,17 @@ describe Stretcher::Index do
     }
     res.should == :retval
     exposed.class.should == Stretcher::IndexType
+  end
+
+  it "should return docs across types when issuing an mget" do
+    seed_corpus
+    tweet = corpus.select {|d| d['_type'] == 'tweet' }.first
+    user =  corpus.select {|d| d['_type'] == 'user' }.first
+    res = index.mget([{:_type => 'tweet', :_id => (tweet["_id"] || tweet['id'])},
+                      {:_type => 'user', :_id => (user["_id"] || user['id']) }])
+    res.length.should == 2
+    equalizer = lambda {|r| [r['_type'], r['_id']] }
+    res.map {|d| equalizer.call(d)}.sort.should == [tweet,user].map {|d| equalizer.call(d)}.sort
   end
 
   it "should return stats without error" do
@@ -88,13 +109,14 @@ describe Stretcher::Index do
 
     it "should bulk delete documents" do
       seed_corpus
-      index.bulk_delete([
-                         {"_type" => 'tweet', "_id" => 'fooid'},
-                         {"_type" => 'tweet', "_id" => 'barid'},
-                        ])
+      docs_meta = [
+                   {"_type" => 'tweet', "_id" => 'fooid'},
+                   {"_type" => 'tweet', "_id" => 'barid'},
+                  ]
+      index.mget(docs_meta).length.should == 2
+      index.bulk_delete(docs_meta)
       index.refresh
-      res = index.search({}, {:query => {:match_all => {}}})
-      expect(res.results.map(&:_id)).to match_array ['bazid']
+      res = index.mget(docs_meta).length.should == 0
     end
   end
 

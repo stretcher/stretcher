@@ -36,6 +36,10 @@ module Stretcher
       request(:get, '_mget', options, :ids => ids)
     end
 
+    def mget_existing(ids,options={})
+      mget(ids, options)
+    end
+
     # Explains a query for a specific document
     def explain(id, query, options={})
       request(:get, "#{id}/_explain", options, query)

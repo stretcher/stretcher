@@ -140,11 +140,18 @@ module Stretcher
     end
 
     # Retrieves multiple documents, possibly from multiple indexes
+    # Takes an array of docs, returns an array of docs
     # as per: http://www.elasticsearch.org/guide/reference/api/multi-get.html
-    def mget(body={})
-      request(:get, path_uri("/_mget")) {|req|
-        req.body = body
-      }
+    # If you pass :exists => true as the second argument it will not return stubs
+    # for missing documents. :exists => false works in reverse
+    def mget(docs=[], opts={})
+      res = request(:get, path_uri("/_mget"), {}, {:docs => docs})[:docs]
+      if opts.has_key?(:exists)
+        match = opts[:exists]
+        res.select {|d| d[:exists] == match}
+      else
+        res
+      end
     end
 
     # Implements the Analyze API
