@@ -42,6 +42,18 @@ describe Stretcher::Index do
     index.refresh
   end
 
+  it 'creates an index with the correct HTTP command' do
+    index.delete rescue nil
+
+    options = { :mappings => { :movie => { :properties => { :category => { :type => 'string' } } } } }
+
+    server.logger.should_receive(:debug) do |&block|
+      block.call.should == %{curl -XPUT http://localhost:9200/foo -d '#{options.to_json}' '-H Accept: application/json' '-H Content-Type: application/json' '-H User-Agent: Stretcher Ruby Gem 1.14.0'}
+    end
+
+    index.create(options)
+  end
+
   it "should work on an existential level" do
     index.delete rescue nil
     index.exists?.should be_false

@@ -57,9 +57,9 @@ module Stretcher
       @server.bulk body, options
     end
 
-    # Creates the index, with the supplied hash as the optinos body (usually mappings: and settings:))
-    def create(options={})
-      request(:put, "/", {}, options)
+    # Creates the index, with the supplied hash as the options body (usually mappings: and settings:))
+    def create(options=nil)
+      request(:put, nil, nil, options)
     end
 
     # Deletes the index
