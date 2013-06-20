@@ -48,7 +48,7 @@ describe Stretcher::Index do
     options = { :mappings => { :movie => { :properties => { :category => { :type => 'string' } } } } }
 
     server.logger.should_receive(:debug) do |&block|
-      block.call.should == %{curl -XPUT http://localhost:9200/foo -d '#{options.to_json}' '-H Accept: application/json' '-H Content-Type: application/json' '-H User-Agent: Stretcher Ruby Gem 1.14.0'}
+      block.call.should == %{curl -XPUT http://localhost:9200/foo -d '#{options.to_json}' '-H Accept: application/json' '-H Content-Type: application/json' '-H User-Agent: Stretcher Ruby Gem #{Stretcher::VERSION}'}
     end
 
     index.create(options)
