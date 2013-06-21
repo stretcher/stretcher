@@ -41,9 +41,13 @@ module Stretcher
       log_level = options[:log_level] || :debug
       logger.level = Logger.const_get(log_level.to_s.upcase)
 
-      logger.formatter = proc do |severity, datetime, progname, msg|
-        "[Stretcher][#{severity}]: #{msg}\n"
+      # We don't want to override the formatter if an external logger is used
+      unless options[:logger]
+        logger.formatter = proc do |severity, datetime, progname, msg|
+          "[Stretcher][#{severity}]: #{msg}\n"
+        end
       end
+      
       logger
     end
 
