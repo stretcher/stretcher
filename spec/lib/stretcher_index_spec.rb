@@ -23,10 +23,11 @@ describe Stretcher::Index do
     i
   }
   let(:corpus) {
+    # underscore field that are not system fields should make it through to _source
     [
-     {:text => "Foo", "_type" => 'tweet', "_id" => 'fooid'},
-     {:text => "Bar", "_type" => 'tweet', "_id" => 'barid'},
-     {:text => "Baz", "_type" => 'tweet', "id" => 'bazid'}, # Note we support both _id and id
+     {:text => "Foo", :_text => '_Foo', "_type" => 'tweet', "_id" => 'fooid'},
+     {:text => "Bar", :_text => '_Bar', "_type" => 'tweet', "_id" => 'barid'},
+     {:text => "Baz", :_text => '_Baz', "_type" => 'tweet', "id" => 'bazid'}, # Note we support both _id and id
      {:username => "john", age: 25, "_type" => 'user', "_id" => 'fooid'},
      {:username => "jacob", age: 32, "_type" => 'user', "_id" => 'barid'},
      {:username => "jingleheimer", age: 54, "_type" => 'user', "id" => 'bazid'} # Note we support both _id and id
@@ -49,6 +50,18 @@ describe Stretcher::Index do
     create_user_mapping
     index.bulk_index(corpus)
     index.refresh
+  end
+
+  it 'creates an index with the correct HTTP command' do
+    index.delete rescue nil
+
+    options = { :mappings => { :movie => { :properties => { :category => { :type => 'string' } } } } }
+
+    server.logger.should_receive(:debug) do |&block|
+      block.call.should == %{curl -XPUT http://localhost:9200/foo -d '#{options.to_json}' '-H Accept: application/json' '-H Content-Type: application/json' '-H User-Agent: Stretcher Ruby Gem #{Stretcher::VERSION}'}
+    end
+
+    index.create(options)
   end
 
   it "should work on an existential level" do
@@ -102,6 +115,7 @@ describe Stretcher::Index do
       corpus.each {|doc|
         fetched_doc = index.type(doc["_type"]).get(doc["_id"] || doc["id"], {}, true)
         fetched_doc._source.text.should == doc[:text]
+        fetched_doc._source._text.should == doc[:_text]
         fetched_doc._source._id.should be_nil
         fetched_doc._source._type.should be_nil
       }

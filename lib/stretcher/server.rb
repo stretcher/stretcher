@@ -30,24 +30,22 @@ module Stretcher
       if uri_components.user || uri_components.password
         http.basic_auth(uri_components.user, uri_components.password)
       end
-      
+
       http
     end
-    
+
     # Internal use only.
     # Builds a logger when initializing an instance
     def self.build_logger(options)
-      logger = nil
-      
-      if options[:logger]
-        logger = options[:logger]
-      else
-        logger = Logger.new(STDOUT)
-        logger.level = Logger::WARN
-      end
+      logger = options[:logger] || Logger.new(STDOUT)
+      log_level = options[:log_level] || :debug
+      logger.level = Logger.const_get(log_level.to_s.upcase)
 
-      logger.formatter = proc do |severity, datetime, progname, msg|
-        "[Stretcher][#{severity}]: #{msg}\n"
+      # We don't want to override the formatter if an external logger is used
+      unless options[:logger]
+        logger.formatter = proc do |severity, datetime, progname, msg|
+          "[Stretcher][#{severity}]: #{msg}\n"
+        end
       end
       
       logger
@@ -66,7 +64,7 @@ module Stretcher
     # The options hash takes an optional instance of Logger under :logger.
     #
     #    server = Stretcher::Server.new('http://localhost:9200')
-    # 
+    #
     # The default implementation here uses the net_http_persistent adapter
     # for faraday. If you would like to use a different HTTP library, or alter
     # other faraday config settings you may specify an optional :faraday_configurator
@@ -92,7 +90,7 @@ module Stretcher
       idx = Index.new(self, name, :logger => logger)
       block ? block.call(idx) : idx
     end
-    
+
     # Perform a raw bulk operation. You probably want to use Stretcher::Index#bulk_index
     # which properly formats a bulk index request.
     def bulk(data, options={})
@@ -128,7 +126,7 @@ module Stretcher
     def msearch(body=[])
       raise ArgumentError, "msearch takes an array!" unless body.is_a?(Array)
       fmt_body = body.map(&:to_json).join("\n") + "\n"
-      
+
       res = request(:get, path_uri("/_msearch"), {}, fmt_body)
 
       errors = res.responses.map(&:error).compact
@@ -188,12 +186,12 @@ module Stretcher
     end
 
     # Handy way to query the server, returning *only* the body
-    # Will raise an exception when the status is not in the 2xx range    
+    # Will raise an exception when the status is not in the 2xx range
     def request(method, path, params={}, body=nil, headers={}, &block)
       req = http.build_request(method)
       req.path = path
       req.params.update(Util.clean_params(params)) if params
-      req.body = body if body
+      req.body = body
       req.headers.update(headers) if headers
       block.call(req) if block
       logger.debug { Util.curl_format(req) }
