@@ -142,7 +142,9 @@ module Stretcher
     # as per: http://www.elasticsearch.org/guide/reference/api/multi-get.html
     # If you pass :exists => true as the second argument it will not return stubs
     # for missing documents. :exists => false works in reverse
-    def mget(docs=[], opts={})
+    def mget(docs=[], arg_opts={})
+      opts = {exists: true}.merge(arg_opts)
+      
       res = request(:get, path_uri("/_mget"), {}, {:docs => docs})[:docs]
       if opts.has_key?(:exists)
         match = opts[:exists]
