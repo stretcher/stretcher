@@ -143,6 +143,9 @@ module Stretcher
     # If you pass :exists => true as the second argument it will not return stubs
     # for missing documents. :exists => false works in reverse
     def mget(docs=[], arg_opts={})
+      #Legacy API
+      return legacy_mget(docs) if docs.is_a?(Hash)
+      
       opts = {exists: true}.merge(arg_opts)
       
       res = request(:get, path_uri("/_mget"), {}, {:docs => docs})[:docs]
@@ -152,6 +155,11 @@ module Stretcher
       else
         res
       end
+    end
+    
+    # legacy implementation of mget for backwards compat
+    def legacy_mget(body)
+      request(:get, path_uri("/_mget"), {}, body)
     end
 
     # Implements the Analyze API
