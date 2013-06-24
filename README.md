@@ -14,6 +14,7 @@ A concise, fast ElasticSearch client designed to reflect the actual elastic sear
 * Supports efficient bulk indexing operations
 * Returns most responses in convenient Hashie::Mash form
 * Configurable logging
+* Logs curl commandline statements in debug mode
 * Pure, threadsafe, ruby
 * Easily swap HTTP clients via Faraday
 * Tested against Ruby 2.0,1.9,1.8.7, Jruby, and Rubinius
@@ -85,6 +86,20 @@ server.index(:foo).bulk_index(docs)
 ### Full Documentation
 
 This README documents only part of stretcher's API. The full documentation for stretcher is available in its [full rdocs](http://rdoc.info/github/PoseBiz/stretcher/master/frames).
+
+### Logging
+
+Pass in the the `:log_level` parameter to set logging verbosity. cURL statements are surfaced at the `:debug` log level. For instance:
+
+```ruby
+Stretcher::Server.new('http://localhost:9200', :log_level => :debug)
+```
+
+You can also pass any Logger style object with the `:logger` option. For instance:
+
+```ruby
+Stretcher::Server.new('http://localhost:9200', :logger => Rails.logger)
+```
 
 ### Rails Integration
 

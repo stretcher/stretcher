@@ -38,7 +38,7 @@ module Stretcher
     # Builds a logger when initializing an instance
     def self.build_logger(options)
       logger = options[:logger] || Logger.new(STDOUT)
-      log_level = options[:log_level] || :debug
+      log_level = options[:log_level] || :warn
       logger.level = Logger.const_get(log_level.to_s.upcase)
 
       # We don't want to override the formatter if an external logger is used
