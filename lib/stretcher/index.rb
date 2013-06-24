@@ -43,7 +43,7 @@ module Stretcher
       
       body = documents.reduce("") {|post_data, d_raw|
         d = Hashie::Mash.new(d_raw)
-        index_meta = { :_index => name, :_id => (d.delete(:id) || d.delete(:_id)) }
+        index_meta = { :_index => name, :_id => (d[:id] || d.delete(:_id)) }
 
         system_fields = %w{_type _parent _routing}
         d.keys.reduce(index_meta) do |memo, key|
