@@ -146,7 +146,7 @@ module Stretcher
       #Legacy API
       return legacy_mget(docs) if docs.is_a?(Hash)
       
-      opts = {exists: true}.merge(arg_opts)
+      opts = {:exists => true}.merge(arg_opts)
       
       res = request(:get, path_uri("/_mget"), {}, {:docs => docs})[:docs]
       if opts.has_key?(:exists)
