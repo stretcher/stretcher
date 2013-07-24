@@ -4,6 +4,7 @@ require 'hashie'
 require 'excon'
 require 'faraday'
 require 'faraday_middleware'
+require 'faraday_middleware/multi_json'
 Faraday.load_autoloaded_constants
 require "stretcher/version"
 require 'stretcher/request_error'

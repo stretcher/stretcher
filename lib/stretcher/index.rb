@@ -50,8 +50,8 @@ module Stretcher
           index_meta[key] = d.delete(key) if system_fields.include?(key.to_s)
         end
 
-        post_data << ({action => index_meta}.to_json + "\n")
-        post_data << (d.to_json + "\n") unless action == :delete
+        post_data << (MultiJson.dump({action => index_meta}) + "\n")
+        post_data << (MultiJson.dump(d) + "\n") unless action == :delete
         post_data
       }
       @server.bulk body, options
