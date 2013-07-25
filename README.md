@@ -89,7 +89,7 @@ This README documents only part of stretcher's API. The full documentation for s
 
 ### Logging
 
-Pass in the the `:log_level` parameter to set logging verbosity. cURL statements are surfaced at the `:debug` log level. For instance:
+Pass in the `:log_level` parameter to set logging verbosity. cURL statements are surfaced at the `:debug` log level. For instance:
 
 ```ruby
 Stretcher::Server.new('http://localhost:9200', :log_level => :debug)
