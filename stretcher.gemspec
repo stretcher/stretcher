@@ -11,6 +11,7 @@ Gem::Specification.new do |gem|
   gem.description   = %q{The elegant ElasticSearch client}
   gem.summary       = %q{The elegant ElasticSearch client, supporting persistent connections, and a clean DSL}
   gem.homepage      = "https://github.com/PoseBiz/stretcher"
+  gem.license = 'MIT'
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
