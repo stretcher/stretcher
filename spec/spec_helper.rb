@@ -1,8 +1,12 @@
+require 'gson'
+
 require 'coveralls'
 Coveralls.wear!
 
 require 'rspec'
 require 'stretcher'
+MultiJson.use(:gson)
+puts "Running specs with MultiJson adapter: #{MultiJson.current_adapter}"
 
 File.open("test_logs", 'wb') {|f| f.write("")}
 DEBUG_LOGGER = Logger.new('test_logs')

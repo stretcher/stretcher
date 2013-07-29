@@ -3,6 +3,7 @@ module Stretcher
     
     # cURL formats a Faraday req. Useful for logging
     def self.curl_format(req)
+      MultiJson.dump(req.body)
       body = "-d '#{req.body.is_a?(Hash) ? MultiJson.dump(req.body) : req.body}'" if req.body
       headers = req.headers.map {|name, value| "'-H #{name}: #{value}'" }.sort.join(' ')
       method = req.method.to_s.upcase
