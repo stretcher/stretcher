@@ -192,7 +192,7 @@ module Stretcher
 
     # Full path to the server root dir
     def path_uri(path=nil)
-      @uri.to_s + path.to_s
+      URI.join(@uri.to_s, path.to_s).to_s
     end
 
     # Handy way to query the server, returning *only* the body

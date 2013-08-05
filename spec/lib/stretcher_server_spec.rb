@@ -86,4 +86,16 @@ describe Stretcher::Server do
     server.analyze("Candles", :analyzer => :snowball)
   end
 
+  describe ".path_uri" do
+    context "uri contains trailing /" do
+      subject { Stretcher::Server.new("http://example.com/").path_uri("/foo") }
+      it { should eq ("http://example.com/foo") }
+    end
+
+    context "uri contains no trailing /" do
+      subject { Stretcher::Server.new("http://example.com").path_uri("/foo") }
+      it { should eq ("http://example.com/foo") }
+    end
+  end
+
 end
