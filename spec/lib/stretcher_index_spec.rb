@@ -220,4 +220,13 @@ describe Stretcher::Index do
       res = server.index(:does_not_exist).msearch([{:query => {:match_all => {}}}])
     }.should raise_exception(Stretcher::RequestError)
   end
+
+  describe "#update_settings" do
+    it "updates settings on the index" do
+      index.get_settings['foo']['settings']['index.number_of_replicas'].should eq("0")
+      index.update_settings("index.number_of_replicas" => "1")
+      index.get_settings['foo']['settings']['index.number_of_replicas'].should eq("1")
+    end
+  end
+
 end

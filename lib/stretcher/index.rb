@@ -94,6 +94,11 @@ module Stretcher
       request :get, "_settings"
     end
 
+    # Update settings for this index
+    def update_settings(settings)
+      request :put, "_settings", nil, settings
+    end
+
     # Check if the index has been created on the remote server
     def exists?
       # Unless the exception is hit we know its a 2xx response
