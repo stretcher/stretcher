@@ -185,6 +185,10 @@ module Stretcher
       end
     end
 
+    def get_alias(alias_name_or_prefix)
+      do_alias(alias_name_or_prefix)
+    end
+
     # Perform a refresh, making all indexed documents available
     def refresh
       do_refresh

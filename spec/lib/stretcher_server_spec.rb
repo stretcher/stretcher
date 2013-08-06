@@ -1,7 +1,13 @@
 require 'spec_helper'
 
 describe Stretcher::Server do
-  let(:server) { Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER) }
+  let(:server) do
+    server = Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER)
+    i = server.index('foo')
+    i.delete rescue Stretcher::RequestError::NotFound
+    i.create
+    server
+  end
 
   it "should initialize cleanly" do
     server.class.should == Stretcher::Server
@@ -95,6 +101,40 @@ describe Stretcher::Server do
     context "uri contains no trailing /" do
       subject { Stretcher::Server.new("http://example.com").path_uri("/foo") }
       it { should eq ("http://example.com/foo") }
+    end
+  end
+
+  describe "#get_alias" do
+    let(:request_url) { "_alias/bar" }
+    let(:http_response) { double("http_response") }
+    let(:exception) { Stretcher::RequestError::NotFound.new(http_response) }
+
+    it "sends a request to the correct endpoint with an alias that exists" do
+      expect(server).to receive(:request).with(:get, request_url) { :foo }
+      expect(server.get_alias("bar")).to eq(:foo)
+    end
+
+    it "sends a request to the correct endpoint with an alias that does not exist" do
+      expect(server).to receive(:request).with(:get, request_url).and_raise(exception)
+      expect(http_response).to receive(:status) { 404 }
+
+      expect(server.get_alias("bar")).to eq({})
+    end
+
+    it "sends a request to the correct endpoint and gets and error response" do
+      expect(server).to receive(:request).with(:get, request_url).and_raise(exception)
+      expect(http_response).to receive(:status) { 410 }
+
+      expect { server.get_alias("bar") }.to raise_error(exception)
+    end
+
+    it "should return an empty array if no aliases exist" do
+      expect(server.get_alias("bar")).to eq({})
+    end
+
+    it "should return a hash of the aliases if at least one exists" do
+      server.aliases(:actions => [{ :add => { :index => "foo", :alias => "bar" }}])
+      expect(server.get_alias("bar")).to eq({"foo" => {"aliases" => {"bar" => {}}}})
     end
   end
 

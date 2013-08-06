@@ -38,5 +38,12 @@ module Stretcher
         req.body = query
       end
     end
+
+    def do_alias(alias_name_or_prefix)
+      request(:get, "_alias/#{alias_name_or_prefix}")
+    rescue Stretcher::RequestError::NotFound => e
+      return {} if e.http_response.status == 404
+      raise e
+    end
   end
 end
