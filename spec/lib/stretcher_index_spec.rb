@@ -229,4 +229,31 @@ describe Stretcher::Index do
     end
   end
 
+  describe "#optimize" do
+    let(:request_url) { "http://localhost:9200/foo/_optimize" }
+
+    context "with no options" do
+      it "calls request for the correct endpoint with empty options" do
+        expect(index.server).to receive(:request).with(:post, request_url, nil, {}, {})
+        index.optimize
+      end
+
+      it "successfully runs the optimize command for the index" do
+        expect(index.optimize.ok).to be_true
+      end
+    end
+
+    context "with options" do
+      it "calls request for the correct endpoint with options passed" do
+        expect(index.server).to receive(:request).with(:post, request_url, nil, {"max_num_segments" => 1}, {})
+        index.optimize("max_num_segments" => 1)
+      end
+
+      it "successfully runs the optimize command for the index with the options passed" do
+        expect(index.optimize("max_num_segments" => 1).ok).to be_true
+      end
+    end
+
+  end
+
 end

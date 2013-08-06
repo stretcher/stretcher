@@ -159,6 +159,11 @@ module Stretcher
       do_refresh
     end
 
+    # Perform an optimize on the index to merge and reduce the number of segments
+    def optimize(options={})
+      request(:post, "_optimize", nil, options)
+    end
+
     # Full path to this index
     def path_uri(path="/")
       p = @server.path_uri("/#{name}")
