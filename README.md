@@ -116,10 +116,11 @@ Specs may be run with `rake spec`
 ## Contributors
 
 * [@andrewvc](https://github.com/andrewvc)
+* [@cmaitchison](https://github.com/cmaitchison)
+* [@danharvey](https://github.com/danharvey)
 * [@aq1018](https://github.com/aq1018)
 * [@akahn](https://github.com/akahn)
 * [@psynix](https://github.com/psynix)
-* [@cmaitchison](https://github.com/cmaitchison)
 * [@fmardini](https://github.com/fmardini)
 * [@chatgris](https://github.com/chatgris)
 * [@alpinegizmo](https://github.com/alpinegizmo)
