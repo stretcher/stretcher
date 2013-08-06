@@ -160,8 +160,8 @@ module Stretcher
     end
 
     # Perform an optimize on the index to merge and reduce the number of segments
-    def optimize(options={})
-      request(:post, "_optimize", nil, options)
+    def optimize(options=nil)
+      request(:post, "_optimize", options)
     end
 
     # Full path to this index

@@ -234,7 +234,7 @@ describe Stretcher::Index do
 
     context "with no options" do
       it "calls request for the correct endpoint with empty options" do
-        expect(index.server).to receive(:request).with(:post, request_url, nil, {}, {})
+        expect(index.server).to receive(:request).with(:post, request_url, nil, nil, {})
         index.optimize
       end
 
@@ -245,7 +245,7 @@ describe Stretcher::Index do
 
     context "with options" do
       it "calls request for the correct endpoint with options passed" do
-        expect(index.server).to receive(:request).with(:post, request_url, nil, {"max_num_segments" => 1}, {})
+        expect(index.server).to receive(:request).with(:post, request_url, {"max_num_segments" => 1}, nil, {})
         index.optimize("max_num_segments" => 1)
       end
 
