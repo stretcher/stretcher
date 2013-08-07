@@ -1,3 +1,3 @@
 module Stretcher
-  VERSION = "1.16.3"
+  VERSION = "1.17.0"
 end
