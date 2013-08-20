@@ -5,8 +5,6 @@ module Stretcher
     # Many of the methods marked protected are called by one line shims in subclasses. This is mostly to facilitate
     # better looking rdocs
 
-    private
-
     def do_search(generic_opts={}, explicit_body=nil)
       query_opts = {}
       body = nil
