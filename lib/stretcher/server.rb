@@ -72,6 +72,10 @@ module Stretcher
     # For instance:
     # configurator = proc {|builder| builder.adapter :typhoeus
     # Stretcher::Server.new('http://localhost:9200', :faraday_configurator => configurator)
+    #
+    # You may want to set one or both of :read_timeout and :open_timeout, for Faraday's HTTP
+    # settings. The default is read_timeout: 30, open_timeout: 2, which can be quite long
+    # in many situations
     def initialize(uri='http://localhost:9200', options={})
       @request_mtx = Mutex.new
       @uri = uri.to_s
