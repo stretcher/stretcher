@@ -102,6 +102,11 @@ describe Stretcher::Server do
       subject { Stretcher::Server.new("http://example.com").path_uri("/foo") }
       it { should eq ("http://example.com/foo") }
     end
+
+    context "server lives in a subdirectory" do
+      subject { Stretcher::Server.new("http://example.com/mysubdir/").path_uri("/foo") }      
+      it { should eq ("http://example.com/mysubdir/foo") }
+    end
   end
 
   describe "#get_alias" do

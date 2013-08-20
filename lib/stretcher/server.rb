@@ -4,8 +4,8 @@ module Stretcher
 
     # Internal use only.
     # Returns a properly configured HTTP client when initializing an instance
-    def self.build_client(uri, options={})
-      http = Faraday.new(:url => uri) do |builder|
+    def self.build_client(uri_components, options={})
+      http = Faraday.new(:url => uri_components) do |builder|
         builder.response :mashify
         builder.response :multi_json, :content_type => /\bjson$/
 
@@ -26,7 +26,6 @@ module Stretcher
         "Content-Type" => "application/json"
       }
 
-      uri_components = URI.parse(uri)
       if uri_components.user || uri_components.password
         http.basic_auth(uri_components.user, uri_components.password)
       end
@@ -75,8 +74,9 @@ module Stretcher
     # Stretcher::Server.new('http://localhost:9200', :faraday_configurator => configurator)
     def initialize(uri='http://localhost:9200', options={})
       @request_mtx = Mutex.new
-      @uri = uri
-      @http = self.class.build_client(@uri, options)
+      @uri = uri.to_s
+      @uri_components = URI.parse(@uri)
+      @http = self.class.build_client(@uri_components, options)
       @logger = self.class.build_logger(options)
     end
 
@@ -196,7 +196,7 @@ module Stretcher
 
     # Full path to the server root dir
     def path_uri(path=nil)
-      URI.join(@uri.to_s, path.to_s).to_s
+      URI.join(@uri.to_s, "#{@uri_components.path}/#{path.to_s}").to_s
     end
 
     # Handy way to query the server, returning *only* the body
