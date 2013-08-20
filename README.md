@@ -113,6 +113,12 @@ The test suite is not to be trusted, don't count on your indexes staying around!
 
 Specs may be run with `rake spec`
 
+## Used By
+
+[Pose](http://pose.com)
+[Get Satisfaction](https://getsatisfaction.com/corp/)
+Email or tweet @andrewvc if you'd like to be added to this list!
+
 ## Contributors
 
 * [@andrewvc](https://github.com/andrewvc)
