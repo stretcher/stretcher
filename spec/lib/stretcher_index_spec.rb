@@ -256,4 +256,23 @@ describe Stretcher::Index do
 
   end
 
+  context 'percolator' do
+    let(:request_url) { "http://localhost:9200/_percolator/foo/bar" }
+
+    describe '#register_percolator_query' do
+      it "registers the percolator query with a put request" do
+        expect(index.register_percolator_query('bar', {:query => {:term => {:baz => 'qux'}}}).ok).to be_true
+      end
+    end
+
+    describe '#delete_percolator_query' do
+      before do
+        index.register_percolator_query('bar', {:query => {:term => {:baz => 'qux'}}}).ok
+      end
+
+      it "deletes the percolator query with a delete request" do
+        expect(index.delete_percolator_query('bar').ok).to be_true
+      end
+    end
+  end
 end
