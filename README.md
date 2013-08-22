@@ -130,7 +130,7 @@ Specs may be run with `rake spec`
 
 * [Pose](http://pose.com)
 * [Get Satisfaction](https://getsatisfaction.com/corp/)
-* [Reverb](Reverb.com)
+* [Reverb](http://reverb.com)
 
 Email or tweet @andrewvc if you'd like to be added to this list!
 
