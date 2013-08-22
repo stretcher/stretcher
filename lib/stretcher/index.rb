@@ -164,10 +164,28 @@ module Stretcher
       request(:post, "_optimize", options)
     end
 
+    # Registers a percolate query against the index
+    # http://www.elasticsearch.org/guide/reference/api/percolate/
+    def register_percolator_query(query_name, options = {})
+      server.request(:put, percolator_query_path(query_name), nil, options)
+    end
+
+    # Deletes a percolate query from the index
+    # http://www.elasticsearch.org/guide/reference/api/percolate/
+    def delete_percolator_query(query_name)
+      server.request(:delete, percolator_query_path(query_name))
+    end
+
     # Full path to this index
     def path_uri(path="/")
       p = @server.path_uri("/#{name}")
       path ? p << "/#{path}" : p
+    end
+
+    private
+
+    def percolator_query_path(query_name)
+      server.path_uri("/_percolator/#{name}/#{query_name}")
     end
   end
 end

@@ -83,6 +83,19 @@ docs = [{"_type" => "tweet", "_id" => 91011, "text" => "Bulked"}]
 server.index(:foo).bulk_index(docs)
 ```
 
+### Percolate
+
+Implements the ElasticSearch [Percolate API](http://www.elasticsearch.org/guide/reference/api/percolate/)
+
+```ruby
+# Register a new percolate query
+server.index(:foo).register_percolator_query(query_name, query_hash)
+# Check a document against an index, returns an array of query matches
+server.index(:foo).type(:foo1).percolate(doc)
+# Delete a percolate query
+server.index(:foo).delete_percolator_query(query_name)
+```
+
 ### Full Documentation
 
 This README documents only part of stretcher's API. The full documentation for stretcher is available in its [full rdocs](http://rdoc.info/github/PoseBiz/stretcher/master/frames).

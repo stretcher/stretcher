@@ -179,4 +179,14 @@ describe Stretcher::IndexType do
       type.exists?(987).should be_false
     end
   end
+
+  describe 'percolate' do
+    before do
+      index.register_percolator_query('bar', {:query => {:term => {:baz => 'qux'}}}).ok
+    end
+
+    it 'returns matching percolated queries based on the document' do
+      type.percolate({:baz => 'qux'}).matches.should == ['bar']
+    end
+  end
 end
