@@ -73,6 +73,10 @@ module Stretcher
       false
     end
 
+    def percolate(document = {})
+      request :get, '_percolate', nil, {:doc => document}
+    end
+
     # Retrieve the mapping for this type
     def get_mapping
       request :get, "_mapping"
