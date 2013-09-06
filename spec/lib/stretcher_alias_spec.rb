@@ -14,7 +14,7 @@ describe Stretcher::Alias do
   describe 'creating' do
 
     before do
-      index.alias('user-1').create(index: 'foo', filter: {
+      index.alias('user-1').create(filter: {
         term: { user_id: 1 }
       })
     end
@@ -28,7 +28,7 @@ describe Stretcher::Alias do
   describe 'searching' do
 
     it 'should be able to search with filter' do
-      resp = index.alias('user-1').search(:query => { :match_all => {} })
+      resp = server.index('user-1').search(:query => { :match_all => {} })
       resp.results.map(&:message).should == ['visible']
     end
 

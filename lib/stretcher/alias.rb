@@ -19,15 +19,6 @@ module Stretcher
       end
     end
 
-    # Search an alias
-    def search(options = {})
-      prefixed_path = @server.path_uri("/#{@name}/_search")
-      raw = @server.request(:get, prefixed_path, {}, nil, {}) do |req|
-        req.body = options
-      end
-      Stretcher::SearchResults.new(:raw => raw)
-    end
-
     # Delete an alias
     def delete
       request(:delete)
