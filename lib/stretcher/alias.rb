@@ -1,6 +1,8 @@
 module Stretcher
   class Alias < EsComponent
 
+    attr_reader :index
+
     def initialize(index, name, options = {})
       @index = index
       @server = index.server
