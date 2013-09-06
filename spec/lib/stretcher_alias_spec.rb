@@ -8,6 +8,7 @@ describe Stretcher::Alias do
   before do
     index.type(:bar).put(1, { message: 'visible', user_id: 1 })
     index.type(:bar).put(2, { message: 'hidden', user_id: 2 })
+    index.refresh
   end
 
   describe 'creating' do
