@@ -22,6 +22,17 @@ module Stretcher
       block ? block.call(t) : t
     end
 
+    # Returns a Stretcher::Alias object for the alias +name+.
+    # Optionally takes a block, which will be passed a single arg with the Alias obj
+    # The block syntax returns the evaluated value of the block
+    #
+    #   my_server.alias('user_1') # Stretcher::Alias
+    #   my_server.alias { |alias| 1 } # 1
+    def alias(name, &block)
+      al = Alias.new(self, name, :logger => logger)
+      block ? block.call(al) : al
+    end
+
     # Given a hash of documents, will bulk index
     #
     #    docs = [{"_type" => "tweet", "_id" => 91011, "text" => "Bulked"}]
