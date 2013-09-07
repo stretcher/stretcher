@@ -4,6 +4,7 @@ describe Stretcher::Alias do
 
   let(:server) { Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER) }
   let(:index) { server.index(:foo) }
+  let(:my_alias) { index.alias('user-1') }
 
   before do
     index.type(:bar).put(1, { message: 'visible', user_id: 1 })
@@ -14,13 +15,13 @@ describe Stretcher::Alias do
   describe 'creating' do
 
     before do
-      index.alias('user-1').create(filter: {
+      my_alias.create(filter: {
         term: { user_id: 1 }
       })
     end
 
     it 'should have the alias' do
-      index.alias('user-1').should exist
+      my_alias.should exist
     end
 
   end
@@ -28,7 +29,7 @@ describe Stretcher::Alias do
   describe 'searching' do
 
     it 'should be able to search with filter' do
-      resp = server.index('user-1').search(:query => { :match_all => {} })
+      resp = my_alias.index_context.search(:query => { :match_all => {} })
       resp.results.map(&:message).should == ['visible']
     end
 
@@ -37,11 +38,11 @@ describe Stretcher::Alias do
   describe 'destroying' do
 
     before do
-      index.alias('user-1').delete
+      my_alias.delete
     end
 
     it 'should have removed the alias' do
-      index.alias('user-1').should_not exist
+      my_alias.should_not exist
     end
 
   end

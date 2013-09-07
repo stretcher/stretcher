@@ -50,6 +50,10 @@ res.total   # => 30
 res.results # => [#<Hashie::Mash _id="4" text="Hello 4">, ...]
 res.facets  # => nil
 res.raw     # => #<Hashie::Mash ...> Raw JSON from the search
+# use an alias
+alias = server.index(:foo).alias(:my_alias)
+alias.create({ filter: { term: { user_id: 1 } } })
+alias.index_context.search({ query: { match_all: {} } })
 ```
 
 ### Block Syntax
