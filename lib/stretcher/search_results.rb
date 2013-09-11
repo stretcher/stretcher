@@ -33,6 +33,9 @@ module Stretcher
       self.results = raw.hits.hits.collect do |r|
         k = ['_source', 'fields'].detect { |k| r.key?(k) }
         doc = k.nil? ? SearchResults.result_class.new : r[k]
+        if doc.class != SearchResults.result_class
+          doc = SearchResults.result_class.new(doc)
+        end
         if r.key?('highlight')
           doc.merge!({"_highlight" => r['highlight']})
         end
