@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+class CustomResultClass < Hashie::Mash; end
+
 describe Stretcher::SearchResults do
   let(:result) do
     Hashie::Mash.new({
@@ -24,5 +26,13 @@ describe Stretcher::SearchResults do
     its(:_id) { should == 2 }
     its(:_index) { should == 'index_name' }
     its(:_type) { should == 'type_name' }
+  end
+
+  context 'use custom result class' do
+    subject(:search_result) do
+      Stretcher::SearchResults.result_class = CustomResultClass
+      Stretcher::SearchResults.new(result).results.first
+    end
+    its(:class) { should == CustomResultClass }
   end
 end
