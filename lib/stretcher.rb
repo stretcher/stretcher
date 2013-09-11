@@ -13,6 +13,7 @@ require 'stretcher/es_component'
 require 'stretcher/server'
 require 'stretcher/index'
 require 'stretcher/index_type'
+require 'stretcher/alias'
 require 'stretcher/util'
 
 module Stretcher
