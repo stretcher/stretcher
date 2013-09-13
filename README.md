@@ -54,6 +54,8 @@ res.raw     # => #<Hashie::Mash ...> Raw JSON from the search
 alias = server.index(:foo).alias(:my_alias)
 alias.create({ filter: { term: { user_id: 1 } } })
 alias.index_context.search({ query: { match_all: {} } })
+# or get some cluster health information
+server.cluster.health # Hashie::Mash
 ```
 
 ### Block Syntax

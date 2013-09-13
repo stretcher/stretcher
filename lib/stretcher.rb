@@ -14,6 +14,7 @@ require 'stretcher/server'
 require 'stretcher/index'
 require 'stretcher/index_type'
 require 'stretcher/alias'
+require 'stretcher/cluster'
 require 'stretcher/util'
 
 module Stretcher
