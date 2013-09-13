@@ -14,13 +14,28 @@ module Stretcher
     property :facets
     property :results
 
+    # Returns the class used to represent search results in responses.
+    # Defaults to Hashie::Mash.
+    def self.result_class
+      @@result_class ||= Hashie::Mash
+    end
+
+    # Use to customize the class used to represent search results.
+    # Default value is Hashie::Mash.
+    def self.result_class=(cls)
+      @@result_class = cls
+    end
+
     def initialize(*args)
       super
       self.total = raw.hits.total
       self.facets = raw.facets
       self.results = raw.hits.hits.collect do |r|
         k = ['_source', 'fields'].detect { |k| r.key?(k) }
-        doc = k.nil? ? Hashie::Mash.new : r[k]
+        doc = k.nil? ? SearchResults.result_class.new : r[k]
+        if doc.class != SearchResults.result_class
+          doc = SearchResults.result_class.new(doc)
+        end
         if r.key?('highlight')
           doc.merge!({"_highlight" => r['highlight']})
         end
