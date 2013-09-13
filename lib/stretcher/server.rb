@@ -95,6 +95,14 @@ module Stretcher
       block ? block.call(idx) : idx
     end
 
+    # Returns the Stretcher::Cluster for this server
+    # Optionally takes a block, which will be passed a single arg with the
+    # Cluster object.  The block returns the evaluated value of the block.
+    def cluster(&block)
+      cluster = Cluster.new(self, :logger => logger)
+      block ? block.call(cluster) : cluster
+    end
+
     # Perform a raw bulk operation. You probably want to use Stretcher::Index#bulk_index
     # which properly formats a bulk index request.
     def bulk(data, options={})

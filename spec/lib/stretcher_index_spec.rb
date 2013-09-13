@@ -104,6 +104,11 @@ describe Stretcher::Index do
     create_tweet_mapping
   end
 
+  it 'should be able to get mapping' do
+    index.get_mapping.should_not be_nil
+    index.get_mapping.foo.should_not be_nil
+  end
+
   it "should retrieve settings properly" do
     index.get_settings['foo']['settings']['index.number_of_shards'].should eq("1")
     index.get_settings['foo']['settings']['index.number_of_replicas'].should eq("0")
