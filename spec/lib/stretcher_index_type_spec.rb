@@ -2,8 +2,7 @@ require 'spec_helper'
 
 describe Stretcher::IndexType do
   let(:server) { Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER) }
-  let(:index) { server.index(:foo) }
-  
+  let(:index) { ensure_test_index(server, :foo) }
   let(:type) {  index.type(:bar) }
 
   it "should be existentially aware" do
@@ -46,8 +45,8 @@ describe Stretcher::IndexType do
 
     it "should add _highlight field to resulting documents when present" do
       res = type.search(:query => {:match => {:message => 'hello'}}, :highlight => {:fields => {:message => {}}})
-      res.results.first.message.should == @doc[:message]
-      res.results.first.should have_key '_highlight'
+      res.pretty.first.message.should == @doc[:message]
+      res.pretty.first.should have_key '_highlight'
     end
   end
 

@@ -18,7 +18,7 @@ module Stretcher
       response = request(:get, "_search", query_opts) do |req|
         req.body = body
       end
-      SearchResults.new(:raw => response)
+      SearchResults.new(response)
     end
 
     def do_refresh
