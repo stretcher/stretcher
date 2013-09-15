@@ -4,24 +4,7 @@ describe Stretcher::Index do
   let(:server) {
     Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER)
   }
-  let(:index) {
-    i = server.index('foo')
-    begin
-      i.delete
-    rescue Stretcher::RequestError::NotFound
-    end
-    server.refresh
-    i.create({
-      :settings => {
-        :number_of_shards => 1,
-        :number_of_replicas => 0
-      }
-    })
-    # Why do both? Doesn't hurt, and it fixes some races
-    server.refresh
-    i.refresh
-    i
-  }
+  let(:index) { ensure_test_index(server, :foo) }
   let(:corpus) {
     # underscore field that are not system fields should make it through to _source
     [
