@@ -18,6 +18,7 @@ A concise, fast ElasticSearch Ruby client designed to reflect the actual elastic
 * Pure, threadsafe, ruby
 * Easily swap HTTP clients via Faraday
 * Tested against Ruby 2.0,1.9,1.8.7, Jruby, and Rubinius
+* [Semantically versioned](http://semver.org/)
 
 ## Installation
 
@@ -29,9 +30,7 @@ gem 'stretcher'
 
 ## Usage
 
-If you're just getting started, skip below to the basic usage section. This README is a quick getting started guide. For detailed docs read the [full rdocs](http://rdoc.info/github/PoseBiz/stretcher/master/frames).
-
-### Getting Started
+#### Getting Started
 
 1. [Basic Usage](https://github.com/PoseBiz/stretcher#basic-usage)
 1. [Multi Search](https://github.com/PoseBiz/stretcher#multi-search)
@@ -40,7 +39,10 @@ If you're just getting started, skip below to the basic usage section. This READ
 1. [Logging](https://github.com/PoseBiz/stretcher#logging)
 1. [Rails Integration](https://github.com/PoseBiz/stretcher#rails-integration)
 
-### RDocs
+#### RDocs
+
+Stretcher Strives to provide adequate documentation for all methods. Many methods not described in the 'Getting Started' section can be found in the [full rdocs](http://rdoc.info/github/PoseBiz/stretcher/master/frames).
+
 * [Stretcher::Server.new.* (Stretcher::Server)](http://rdoc.info/github/PoseBiz/stretcher/master/Stretcher/Server)
 * [Stretcher::Server.new.index(:foo).* (Stretcher::Index)](http://rdoc.info/github/PoseBiz/stretcher/master/Stretcher/Index)
 * [Stretcher::Server.new.index(:foo).type(:bar).* (Stretcher::IndexType)](http://rdoc.info/github/PoseBiz/stretcher/master/Stretcher/IndexType)
