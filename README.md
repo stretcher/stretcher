@@ -29,6 +29,16 @@ gem 'stretcher'
 
 ## Usage
 
+If you're just getting started, skip below to the basic usage section. This README is a quick getting started guide. For detailed docs read the [full rdocs](http://rdoc.info/github/PoseBiz/stretcher/master/frames).
+
+Guide to the RDocs
+* [Stretcher::Server.new.* (Stretcher::Server)](http://rdoc.info/github/PoseBiz/stretcher/master/Stretcher/Server)
+* [Stretcher::Server.new.index(:foo).* (Stretcher::Index)](http://rdoc.info/github/PoseBiz/stretcher/master/Stretcher/Index)
+* [Stretcher::Server.new.index(:foo).type(:bar).* (Stretcher::IndexType)](http://rdoc.info/github/PoseBiz/stretcher/master/Stretcher/IndexType)
+* [Stretcher::Server.new.index(:foo).search (Stretcher::SearchResult)](http://rdoc.info/github/PoseBiz/stretcher/master/Stretcher/SearchResult)
+* [Stretcher::Server.new.index(:foo).alias(:baz).* (Stretcher::Alias)](http://rdoc.info/github/PoseBiz/stretcher/master/Stretcher/Alias)
+* [Stretcher::Server.new.cluster.* (Stretcher::Cluster)](http://rdoc.info/github/PoseBiz/stretcher/master/Stretcher/Cluster)
+
 ### Basic Usage
 
 ```ruby
@@ -47,7 +57,7 @@ server.index(:foo).type(:tweet).get(3)
 res = server.index(:foo).search(size: 12, query: {match_all: {}})
 res.class   # Stretcher::SearchResults
 res.total   # => 30
-res.results # => [#<Hashie::Mash _id="4" text="Hello 4">, ...]
+res.documents # => [#<Hashie::Mash _id="4" text="Hello 4">, ...]
 res.facets  # => nil
 res.raw     # => #<Hashie::Mash ...> Raw JSON from the search
 # use an alias
@@ -104,7 +114,7 @@ server.index(:foo).delete_percolator_query(query_name)
 
 ### Full Documentation
 
-This README documents only part of stretcher's API. The full documentation for stretcher is available in its [full rdocs](http://rdoc.info/github/PoseBiz/stretcher/master/frames).
+
 
 ### Logging
 
