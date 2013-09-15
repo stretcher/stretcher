@@ -5,7 +5,7 @@
 [![Code Climate](https://codeclimate.com/github/PoseBiz/stretcher.png)](https://codeclimate.com/github/PoseBiz/stretcher)
 [![Coverage Status](https://coveralls.io/repos/PoseBiz/stretcher/badge.png)](https://coveralls.io/r/PoseBiz/stretcher)
 
-A concise, fast ElasticSearch Ruby client designed to reflect the actual elastic search API as closely as possible. Elastic search's API is complex, and mostly documented on the Elastic Search Guide. This client tries to stay out of your way more than others making advanced techniques easier to implement, and making debugging Elastic Search's sometimes cryptic errors easier.
+A concise, fast ElasticSearch Ruby client designed to reflect the actual elastic search API as closely as possible. Elastic search's API is complex, and mostly documented on the Elastic Search Guide. This client tries to stay out of your way more than others making advanced techniques easier to implement, and making debugging Elastic Search's sometimes cryptic errors easier. Stretcher is currently in production use by Pose, Get Satisfaction, Reverb, and many others.
 
 # Features
 
@@ -31,7 +31,16 @@ gem 'stretcher'
 
 If you're just getting started, skip below to the basic usage section. This README is a quick getting started guide. For detailed docs read the [full rdocs](http://rdoc.info/github/PoseBiz/stretcher/master/frames).
 
-Guide to the RDocs
+### Getting Started
+
+1. [Basic Usage](https://github.com/PoseBiz/stretcher#basic-usage)
+1. [Multi Search](https://github.com/PoseBiz/stretcher#multi-search)
+1. [Bulk Indexing](https://github.com/PoseBiz/stretcher#bulk-indexing)
+1. [Percolate](https://github.com/PoseBiz/stretcher#percolate)
+1. [Logging](https://github.com/PoseBiz/stretcher#logging)
+1. [Rails Integration](https://github.com/PoseBiz/stretcher#rails-integration)
+
+### RDocs
 * [Stretcher::Server.new.* (Stretcher::Server)](http://rdoc.info/github/PoseBiz/stretcher/master/Stretcher/Server)
 * [Stretcher::Server.new.index(:foo).* (Stretcher::Index)](http://rdoc.info/github/PoseBiz/stretcher/master/Stretcher/Index)
 * [Stretcher::Server.new.index(:foo).type(:bar).* (Stretcher::IndexType)](http://rdoc.info/github/PoseBiz/stretcher/master/Stretcher/IndexType)
@@ -112,10 +121,6 @@ server.index(:foo).type(:foo1).percolate(doc)
 server.index(:foo).delete_percolator_query(query_name)
 ```
 
-### Full Documentation
-
-
-
 ### Logging
 
 Pass in the `:log_level` parameter to set logging verbosity. cURL statements are surfaced at the `:debug` log level. For instance:
@@ -141,12 +146,6 @@ Running the specs requires an operational Elastic Search server on http://localh
 The test suite is not to be trusted, don't count on your indexes staying around!
 
 Specs may be run with `rake spec`
-
-## Used By
-
-* [Pose](http://pose.com)
-* [Get Satisfaction](https://getsatisfaction.com/corp/)
-* [Reverb](http://reverb.com)
 
 Email or tweet @andrewvc if you'd like to be added to this list!
 
