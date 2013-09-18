@@ -146,7 +146,7 @@ module Stretcher
         raise RequestError.new(res), "Could not msearch #{errors.inspect}"
       end
 
-      res['responses'].map {|r| SearchResults.new(:raw => r)}
+      res['responses'].map {|r| SearchResults.new(r)}
     end
 
     # Retrieves multiple documents, possibly from multiple indexes
