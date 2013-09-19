@@ -45,8 +45,8 @@ describe Stretcher::IndexType do
 
     it "should add _highlight field to resulting documents when present" do
       res = type.search(:query => {:match => {:message => 'hello'}}, :highlight => {:fields => {:message => {}}})
-      res.pretty.first.message.should == @doc[:message]
-      res.pretty.first.should have_key '_highlight'
+      res.documents.first.message.should == @doc[:message]
+      res.documents.first.should have_key '_highlight'
     end
   end
 

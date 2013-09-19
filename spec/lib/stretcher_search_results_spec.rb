@@ -18,7 +18,7 @@ describe Stretcher::SearchResults do
 
   context 'merges in select keys' do
     subject(:search_result) {
-      Stretcher::SearchResults.new(result).pretty.first
+      Stretcher::SearchResults.new(result).documents.first
     }
     
     its(:_score) { should == 255 }
