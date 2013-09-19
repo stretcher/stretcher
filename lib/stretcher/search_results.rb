@@ -34,7 +34,7 @@ module Stretcher
     # DEPRECATED!
     # Call #pretty instead!
     def results
-      documents
+      pretty
     end
   
     # Returns a 'prettier' version of elasticsearch results
@@ -44,9 +44,9 @@ module Stretcher
     # 2. Merge any keys beginning with a '_' into it as well (such as '_score')
     # 3. Copy the 'highlight' field into '_highlight'
     #
-    def documents
+    def pretty
       # This function and its helpers are side-effecty for speed
-      @documents ||= raw[:hits][:hits].map do |hit|
+      @pretty ||= raw[:hits][:hits].map do |hit|
         doc = extract_source(hit)
         copy_underscores(hit, doc)
         copy_highlight(hit, doc)
