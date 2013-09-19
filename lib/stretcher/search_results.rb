@@ -1,4 +1,3 @@
-require 'hashie/dash'
 module Stretcher
   # Conveniently represents elastic search results in a more compact fashion
   #
@@ -33,9 +32,9 @@ module Stretcher
     end    
 
     # DEPRECATED!
-    # Call #documents instead!
+    # Call #pretty instead!
     def results
-      pretty
+      documents
     end
   
     # Returns a 'prettier' version of elasticsearch results
@@ -45,7 +44,7 @@ module Stretcher
     # 2. Merge any keys beginning with a '_' into it as well (such as '_score')
     # 3. Copy the 'highlight' field into '_highlight'
     #
-    def pretty
+    def documents
       # This function and its helpers are side-effecty for speed
       @documents ||= raw[:hits][:hits].map do |hit|
         doc = extract_source(hit)
