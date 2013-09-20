@@ -8,7 +8,7 @@ module Stretcher
       method = req.method.to_s.upcase
       url = Util.qurl(req.path,req.params)
       
-      ["curl -X#{method}", url, body, headers].compact.join(' ')  
+      ["curl -X#{method}", "'" + url + "'", body, headers].compact.join(' ')  
     end
 
     # Formats a url + query opts
