@@ -66,11 +66,12 @@ server.index(:foo).type(:tweet).get(3)
 # => #<Hashie::Mash text="Hello 3">
 # Perform a search (Returns a Stretcher::SearchResults instance)
 res = server.index(:foo).search(size: 12, query: {match_all: {}})
-res.class   # Stretcher::SearchResults
-res.total   # => 30
+res.class     # Stretcher::SearchResults
+res.total     # => 30
 res.documents # => [#<Hashie::Mash _id="4" text="Hello 4">, ...]
-res.facets  # => nil
-res.raw     # => #<Hashie::Mash ...> Raw JSON from the search
+res.facets    # => nil
+res.raw       # => #<Hashie::Mash ...> Raw JSON from the search
+res.raw_plain # => #<Hash ...> Non-Hashie Raw JSON from the search (fastest)
 # use an alias
 alias = server.index(:foo).alias(:my_alias)
 alias.create({ filter: { term: { user_id: 1 } } })
