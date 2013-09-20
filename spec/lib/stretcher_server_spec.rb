@@ -87,7 +87,7 @@ describe Stretcher::Server do
 
   it 'logs requests correctly' do
     server.logger.should_receive(:debug) do |&block|
-      block.call.should == %{curl -XGET http://localhost:9200/_analyze?analyzer=snowball -d 'Candles' '-H Accept: application/json' '-H Content-Type: application/json' '-H User-Agent: Stretcher Ruby Gem #{Stretcher::VERSION}'}
+      block.call.should == %{curl -XGET 'http://localhost:9200/_analyze?analyzer=snowball' -d 'Candles' '-H Accept: application/json' '-H Content-Type: application/json' '-H User-Agent: Stretcher Ruby Gem #{Stretcher::VERSION}'}
     end
     server.analyze("Candles", :analyzer => :snowball)
   end
