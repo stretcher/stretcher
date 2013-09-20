@@ -17,7 +17,11 @@ describe Stretcher::IndexType do
   before do
     type.delete_query(:match_all => {})
     index.refresh
-    type.put_mapping({"bar" => {"properties" => {"message" => {"type" => "string"}}}})
+    type.put_mapping({"bar" => {
+                         "properties" => {
+                           "message" => {"type" => "string", analyzer: "snowball"},
+                           "username" => {"type" => "string"}
+                         }}})
   end
 
   describe "searching" do
@@ -47,6 +51,31 @@ describe Stretcher::IndexType do
       res = type.search(:query => {:match => {:message => 'hello'}}, :highlight => {:fields => {:message => {}}})
       res.documents.first.message.should == @doc[:message]
       res.documents.first.should have_key '_highlight'
+    end
+  end
+
+  describe "document based mlt_searches" do
+    let(:doc_one) {{message: "I just saw Death Wish I with charles bronson!", :_timestamp => 1366420402}}
+    let(:doc_two) {{message: "Death Wish II was even better!", :_timestamp => 1366420403}}
+    let(:doc_three) {{message: "Death Wish III was even better, making it the best!", :_timestamp => 1366420403}}
+
+    before do
+      type.put(1, doc_one)
+      type.put(2, doc_two)
+      type.put(3, doc_three)
+      type.index.refresh
+    end
+
+    let (:results) {
+      type.mlt(1, min_term_freq: 1, min_doc_freq: 1, fields: [:message])
+    }
+    
+    it "should return results as SearchResults" do
+      results.should be_a(Stretcher::SearchResults)
+    end
+    
+    it "should return expected mlt results" do
+      Set.new(results.docs.map(&:_id)).should == Set.new(["2", "3"])
     end
   end
 

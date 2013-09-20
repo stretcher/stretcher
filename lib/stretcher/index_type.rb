@@ -73,8 +73,19 @@ module Stretcher
       false
     end
 
+    # Takes a document and percolates it
     def percolate(document = {})
       request :get, '_percolate', nil, {:doc => document}
+    end
+    
+    # Runs an MLT query based on the document's content.
+    # This is actually a search, so a Stretcher::SearchResults object is returned
+    #
+    # Equivalent to hitting /index/type/id/_mlt
+    # See http://www.elasticsearch.org/guide/reference/api/more-like-this/ for more
+    # Takens an options hash as a second argument, for things like fields=
+    def mlt(id, options={})
+      SearchResults.new(request(:get, "#{id}/_mlt", options))
     end
 
     # Retrieve the mapping for this type

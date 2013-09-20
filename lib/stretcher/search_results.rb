@@ -13,6 +13,8 @@ module Stretcher
     end
     
     # Returns a plain (string keyed) hash of the raw response
+    # Normally stretcher deals in Hashie::Mash-ified versions of data
+    # If you have truly gigantic result sets this may matter.
     def raw_plain
       @raw_plain
     end
@@ -27,17 +29,14 @@ module Stretcher
       @total ||= raw_plain['hits']['total']
     end
 
+    # Returns the facet data from elasticsearch
+    # Equivalent to raw[:facets]
     def facets
       @facets ||= raw[:facets]
     end    
-
-    # DEPRECATED!
-    # Call #documents instead!
-    def results
-      documents
-    end
   
     # Returns a 'prettier' version of elasticsearch results
+    # Also aliased as +docs+
     # This will:
     # 
     # 1. Return either '_source' or 'fields' as the base of the result
@@ -52,6 +51,13 @@ module Stretcher
         copy_highlight(hit, doc)
         doc
       end
+    end
+    alias_method :docs, :documents
+
+    # DEPRECATED!
+    # Call #documents instead!
+    def results
+      documents
     end
     
     private
@@ -72,16 +78,15 @@ module Stretcher
     def copy_underscores(hit, doc)
       # Copy underscore keys into the document
       hit.each do |k,v|
-        if k && k[0] == "_"
-          doc[k] = v
-        end
+        doc[k] = v if k && k[0] == "_"
       end
+      
       doc
     end
 
     def copy_highlight(hit, doc)
       if highlight = hit.key?("highlight")
-        doc[:_highlight] = highlight
+        doc[:_highlight] = highlight 
       end
       doc
     end
