@@ -54,7 +54,7 @@ module Stretcher
       
       body = documents.reduce("") {|post_data, d_raw|
         d = Hashie::Mash.new(d_raw)
-        index_meta = { :_index => name, :_id => (d[:id] || d.delete(:_id)) }
+        index_meta = { :_id => (d[:id] || d.delete(:_id)) }
 
         system_fields = %w{_type _parent _routing}
         d.keys.reduce(index_meta) do |memo, key|
@@ -65,7 +65,7 @@ module Stretcher
         post_data << (MultiJson.dump(d) << "\n") unless action == :delete
         post_data
       }
-      @server.bulk body, options
+      bulk body, options
     end
 
     # Creates the index, with the supplied hash as the options body (usually mappings: and settings:))
@@ -185,6 +185,12 @@ module Stretcher
     # http://www.elasticsearch.org/guide/reference/api/percolate/
     def delete_percolator_query(query_name)
       server.request(:delete, percolator_query_path(query_name))
+    end
+    
+    # Perform a raw bulk operation. You probably want to use Stretcher::Index#bulk_index
+    # which properly formats a bulk index request.
+    def bulk(data, options={})
+      request(:post, "_bulk", options, data)
     end
 
     # Full path to this index
