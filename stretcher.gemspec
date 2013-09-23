@@ -20,7 +20,6 @@ Gem::Specification.new do |gem|
 
   if RUBY_PLATFORM == 'java'
     gem.add_runtime_dependency('jruby-openssl')
-    gem.add_runtime_dependency('json-jruby')
   end
 
   if RUBY_VERSION < "1.9"
