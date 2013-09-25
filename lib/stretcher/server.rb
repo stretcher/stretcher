@@ -11,7 +11,7 @@ module Stretcher
 
         builder.request :multi_json
 
-        builder.options[:read_timeout] = options[:read_timeout] || 30
+        builder.options[:timeout] = options[:read_timeout] || 30
         builder.options[:open_timeout] = options[:open_timeout] || 2
 
         if faraday_configurator = options[:faraday_configurator]
