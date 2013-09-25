@@ -20,7 +20,6 @@ describe Stretcher::Server do
   
   it 'sets timeouts from options' do
     server = Stretcher::Server.new(ES_URL, :read_timeout => 5, :open_timeout => 2)
-    puts server.http.options.inspect
     server.http.options[:timeout].should == 5
     server.http.options[:open_timeout].should == 2
   end
