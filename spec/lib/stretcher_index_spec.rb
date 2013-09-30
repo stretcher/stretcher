@@ -148,6 +148,19 @@ describe Stretcher::Index do
     end
   end
 
+  describe "suggestion" do
+    it "should correctly format the suggest request" do
+      expected = {
+        "sug-alias" => {
+          :text => "prefix", 
+          :completion => {:field => "sug-field"}}}
+      index.
+        should_receive(:request).
+        with(:post, "_suggest", expected).once.and_return(:result)
+      index.suggest("sug-alias", "prefix", field: "sug-field").should == :result      
+    end
+  end
+
   it "should delete by query" do
     seed_corpus
     index.search(:query => {:match_all => {}}).total == 3
