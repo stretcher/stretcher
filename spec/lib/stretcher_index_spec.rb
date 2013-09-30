@@ -156,7 +156,7 @@ describe Stretcher::Index do
           :completion => {:field => "sug-field"}}}
       index.
         should_receive(:request).
-        with(:post, "_suggest", expected).once.and_return(:result)
+        with(:post, "_suggest", nil, expected).once.and_return(:result)
       index.suggest("sug-alias", "prefix", field: "sug-field").should == :result      
     end
   end

@@ -197,7 +197,7 @@ module Stretcher
     # suggest("band_complete", "a", field: :suggest)
     # Use the new completion suggest API per http://www.elasticsearch.org/guide/reference/api/search/completion-suggest/
     def suggest(name, text, completion={})
-      request(:post, "_suggest", {name => {:text => text, :completion => completion}})
+      request(:post, "_suggest", nil, {name => {:text => text, :completion => completion}})
     end
     
     # Full path to this index
