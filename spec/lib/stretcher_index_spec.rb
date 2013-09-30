@@ -120,32 +120,32 @@ describe Stretcher::Index do
       index.refresh
       res = index.mget(docs_meta).length.should == 0
     end
-  end
+    
+    it 'allows _routing to be set on bulk index documents' do
+      server.index(:with_routing).delete if server.index(:with_routing).exists?
+      server.index(:with_routing).create({
+                                           :settings => {
+                                             :number_of_shards => 1,
+                                             :number_of_replicas => 0
+                                           },
+                                           :mappings => {
+                                             :_default_ =>  {
+                                               :_routing => { :required => true }
+                                             }
+                                           }
+                                         })
 
-  it 'allows _routing to be set on bulk index documents' do
-    server.index(:with_routing).delete if server.index(:with_routing).exists?
-    server.index(:with_routing).create({
-      :settings => {
-        :number_of_shards => 1,
-        :number_of_replicas => 0
-      },
-      :mappings => {
-        :_default_ =>  {
-          :_routing => { :required => true }
-        }
-      }
-    })
+      lambda {server.index(:with_routing).bulk_index(corpus)}.should raise_exception
+      routed_corpus = corpus.map do |doc|
+        routed_doc = doc.clone
+        routed_doc['_routing'] = 'abc'
+        routed_doc
+      end
 
-    lambda {server.index(:with_routing).bulk_index(corpus)}.should raise_exception
-    routed_corpus = corpus.map do |doc|
-      routed_doc = doc.clone
-      routed_doc['_routing'] = 'abc'
-      routed_doc
+      server.index(:with_routing).bulk_index(routed_corpus)
+
+      server.index(:with_routing).delete
     end
-
-    server.index(:with_routing).bulk_index(routed_corpus)
-
-    server.index(:with_routing).delete
   end
 
   it "should delete by query" do
