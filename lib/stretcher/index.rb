@@ -192,7 +192,14 @@ module Stretcher
     def bulk(data, options={})
       request(:post, "_bulk", options, data)
     end
-
+    
+    # Takes the name, text, and completion options to craft a completion query.
+    # suggest("band_complete", "a", field: :suggest)
+    # Use the new completion suggest API per http://www.elasticsearch.org/guide/reference/api/search/completion-suggest/
+    def suggest(name, text, completion={})
+      request(:post, "_suggest", {name => {:text => text, :completion => completion}})
+    end
+    
     # Full path to this index
     def path_uri(path="/")
       p = @server.path_uri("/#{name}")
