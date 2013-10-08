@@ -6,6 +6,5 @@ services:
 rvm:
   - 2.0.0
   - 1.9.3
-  - jruby-head
   - jruby-19mode
   - rbx-19mode
