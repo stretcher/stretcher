@@ -11,7 +11,7 @@ module Stretcher
     def initialize(raw)
       @raw_plain = raw
     end
-    
+
     # Returns a plain (string keyed) hash of the raw response
     # Normally stretcher deals in Hashie::Mash-ified versions of data
     # If you have truly gigantic result sets this may matter.
@@ -23,7 +23,7 @@ module Stretcher
     def raw
       @raw ||= Hashie::Mash.new(@raw_plain)
     end
-    
+
     # Returns the total number of results
     def total
       @total ||= raw_plain['hits']['total']
@@ -33,12 +33,12 @@ module Stretcher
     # Equivalent to raw[:facets]
     def facets
       @facets ||= raw[:facets]
-    end    
-  
+    end
+
     # Returns a 'prettier' version of elasticsearch results
     # Also aliased as +docs+
     # This will:
-    # 
+    #
     # 1. Return either '_source' or 'fields' as the base of the result
     # 2. Merge any keys beginning with a '_' into it as well (such as '_score')
     # 3. Copy the 'highlight' field into '_highlight'
@@ -59,9 +59,9 @@ module Stretcher
     def results
       documents
     end
-    
+
     private
-    
+
     def extract_source(hit)
       # Memoize the key, since it will be uniform across results
       @doc_key ||= if hit.key?(:_source)
@@ -71,8 +71,8 @@ module Stretcher
                    else
                      nil
                    end
-      
-      Hashie::Mash.new(@doc_key ? hit[@doc_key] : Hashie::Mash.new)      
+
+      Hashie::Mash.new(@doc_key ? hit[@doc_key] : Hashie::Mash.new)
     end
 
     def copy_underscores(hit, doc)
@@ -80,13 +80,13 @@ module Stretcher
       hit.each do |k,v|
         doc[k] = v if k && k[0] == "_"
       end
-      
+
       doc
     end
 
     def copy_highlight(hit, doc)
-      if highlight = hit.key?("highlight")
-        doc[:_highlight] = highlight 
+      if highlight = hit["highlight"]
+        doc[:_highlight] = highlight
       end
       doc
     end
