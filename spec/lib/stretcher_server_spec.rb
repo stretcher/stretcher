@@ -13,6 +13,12 @@ describe Stretcher::Server do
     server.class.should == Stretcher::Server
   end
 
+  it "should allow multiple uris on initialize" do
+    uris   = %w(http://localhost:9200 http://localhost:9201)
+    server = Stretcher::Server.new(uris, :log_level => :info)
+    server.uri.should_not be_nil
+  end
+
   it 'sets log level from options' do
     server = Stretcher::Server.new(ES_URL, :log_level => :info)
     server.logger.level.should == Logger::INFO

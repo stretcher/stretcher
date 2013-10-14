@@ -79,6 +79,7 @@ module Stretcher
     def initialize(uri='http://localhost:9200', options={})
       @request_mtx = Mutex.new
       @uri = uri.to_s
+      @uri = uri.sample.to_s if uri.is_a? Array
       @uri_components = URI.parse(@uri)
       @http = self.class.build_client(@uri_components, options)
       @logger = self.class.build_logger(options)
