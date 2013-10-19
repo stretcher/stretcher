@@ -6,7 +6,6 @@ module Stretcher
     # Returns a properly configured HTTP client when initializing an instance
     def self.build_client(uri_components, options={})
       http = Faraday.new(:url => uri_components) do |builder|
-        builder.response :mashify
         builder.response :multi_json, :content_type => /\bjson$/
 
         builder.request :multi_json
@@ -139,9 +138,9 @@ module Stretcher
       raise ArgumentError, "msearch takes an array!" unless body.is_a?(Array)
       fmt_body = body.map {|l| MultiJson.dump(l) }.join("\n") << "\n"
 
-      res = request(:get, path_uri("/_msearch"), {}, fmt_body)
+      res = request(:get, path_uri("/_msearch"), {}, fmt_body, {}, :mashify => false)
 
-      errors = res.responses.map(&:error).compact
+      errors = res['responses'].map { |response| response['error'] }.compact
       if !errors.empty?
         raise RequestError.new(res), "Could not msearch #{errors.inspect}"
       end
@@ -213,7 +212,8 @@ module Stretcher
 
     # Handy way to query the server, returning *only* the body
     # Will raise an exception when the status is not in the 2xx range
-    def request(method, path, params={}, body=nil, headers={}, &block)
+    def request(method, path, params={}, body=nil, headers={}, options={}, &block)
+      options = { :mashify => true }.merge(options)
       req = http.build_request(method)
       req.path = path
       req.params.update(Util.clean_params(params)) if params
@@ -224,7 +224,7 @@ module Stretcher
 
       @request_mtx.synchronize {
         env = req.to_env(http)
-        check_response(http.app.call(env))
+        check_response(http.app.call(env), options)
       }
     end
 
@@ -233,9 +233,13 @@ module Stretcher
 
     # Internal use only
     # Check response codes from request
-    def check_response(res)
+    def check_response(res, options)
       if res.status >= 200 && res.status <= 299
-        res.body
+        if(options[:mashify] && res.body.instance_of?(Hash))
+          Hashie::Mash.new(res.body)
+        else
+          res.body
+        end
       elsif [404, 410].include? res.status
         err_str = "Error processing request: (#{res.status})! #{res.env[:method]} URL: #{res.env[:url]}"
         err_str << "\n Resp Body: #{res.body}"

@@ -85,7 +85,7 @@ module Stretcher
     # See http://www.elasticsearch.org/guide/reference/api/more-like-this/ for more
     # Takens an options hash as a second argument, for things like fields=
     def mlt(id, options={})
-      SearchResults.new(request(:get, "#{id}/_mlt", options))
+      SearchResults.new(request(:get, "#{id}/_mlt", options, nil, {}, :mashify => false))
     end
 
     # Retrieve the mapping for this type
