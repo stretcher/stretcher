@@ -15,7 +15,7 @@ module Stretcher
         body = generic_opts
       end
 
-      response = request(:get, "_search", query_opts) do |req|
+      response = request(:get, "_search", query_opts, nil, {}, :mashify => false) do |req|
         req.body = body
       end
       SearchResults.new(response)
@@ -25,10 +25,10 @@ module Stretcher
       request(:post, "_refresh")
     end
 
-    def request(method, path=nil, params={}, body=nil, headers={}, &block)
+    def request(method, path=nil, params={}, body=nil, headers={}, options={}, &block)
       prefixed_path = path_uri(path)
       raise "Cannot issue request, no server specified!" unless @server
-      @server.request(method, prefixed_path, params, body, headers, &block)
+      @server.request(method, prefixed_path, params, body, headers, options, &block)
     end
 
     def do_delete_query(query)
