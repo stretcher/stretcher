@@ -61,6 +61,7 @@ describe Stretcher::SearchResults do
 
   context 'result object types' do
     let(:search_result) {
+      sleep 1 rescue nil # Delay a little bit to see what's up with Travis CI
       index.search(:query => {:match_all => {}})
     }
 
