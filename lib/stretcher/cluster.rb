@@ -14,6 +14,10 @@ module Stretcher
       request(:get, 'health', options)
     end
 
+    def state(options = {})
+      request(:get, 'state', options)
+    end
+
     private
 
     def path_uri(path = nil)
