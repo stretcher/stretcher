@@ -86,7 +86,7 @@ module Stretcher
       @uri = uri.to_s
       @uri_components = URI.parse(@uri)
       @http = self.class.build_client(@uri_components, options)
-      @logger = self.class.build_logger(options)      
+      @logger = self.class.build_logger(options)
     end
 
     # Returns a Stretcher::Index object for the index +name+.
