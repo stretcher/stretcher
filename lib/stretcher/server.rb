@@ -75,8 +75,14 @@ module Stretcher
     # You may want to set one or both of :read_timeout and :open_timeout, for Faraday's HTTP
     # settings. The default is read_timeout: 30, open_timeout: 2, which can be quite long
     # in many situations
-    def initialize(uri='http://localhost:9200', options={})
-      @request_mtx = Mutex.new
+    #
+    # When running inside a multi-threaded server such as EventMachine, and 
+    # using a threadsafe HTTP library such as faraday, the mutex synchronization around
+    # API calls to the server can be avoided. In this case, set the option http_threadsafe: true
+    # 
+    def initialize(uri='http://localhost:9200', options={})      
+      @http_threadsafe = !!options[:http_threadsafe]
+      @request_mtx = Mutex.new unless @http_threadsafe
       @uri = uri.to_s
       @uri_components = URI.parse(@uri)
       @http = self.class.build_client(@uri_components, options)
@@ -222,10 +228,15 @@ module Stretcher
       block.call(req) if block
       logger.debug { Util.curl_format(req) }
 
-      @request_mtx.synchronize {
+      if @http_threadsafe
         env = req.to_env(http)
         check_response(http.app.call(env), options)
-      }
+      else
+        @request_mtx.synchronize {
+          env = req.to_env(http)
+          check_response(http.app.call(env), options)
+        }
+      end
     end
 
     private
