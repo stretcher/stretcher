@@ -34,7 +34,6 @@ def ensure_test_index(server, name)
     i_state =  idx_metadata[:state]
     
     break if i_state == 'open'
-    puts "ISTATE #{i_state}"
     
     if attempts_left < 1
         raise "Bad index state! #{i_state}. Metadata: #{idx_metadata}" 
