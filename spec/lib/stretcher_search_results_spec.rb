@@ -66,10 +66,12 @@ describe Stretcher::SearchResults do
     }
 
     it 'returns a plain hash for raw_plain' do
+      sleep 1
       search_result.raw_plain.should be_instance_of(::Hash)
     end
 
     it 'returns a hashie mash for raw' do
+      sleep 1
       search_result.raw.should be_instance_of(Hashie::Mash)
     end
   end
