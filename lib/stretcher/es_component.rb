@@ -5,7 +5,7 @@ module Stretcher
     # Many of the methods marked protected are called by one line shims in subclasses. This is mostly to facilitate
     # better looking rdocs
 
-    def do_search(generic_opts={}, explicit_body=nil)
+    def do_query_dsl_request(generic_opts={}, explicit_body=nil, uri)
       query_opts = {}
       body = nil
       if explicit_body
@@ -15,9 +15,18 @@ module Stretcher
         body = generic_opts
       end
 
-      response = request(:get, "_search", query_opts, nil, {}, :mashify => false) do |req|
+      request(:get, uri, query_opts, nil, {}, :mashify => false) do |req|
         req.body = body
       end
+    end
+
+    def do_count(generic_opts={}, explicit_body=nil)
+      response = do_query_dsl_request(generic_opts, explicit_body, "_count")
+      CountResults.new(response)
+    end
+
+    def do_search(generic_opts={}, explicit_body=nil)
+      response = do_query_dsl_request(generic_opts, explicit_body, "_search")
       SearchResults.new(response)
     end
 
