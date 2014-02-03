@@ -163,11 +163,12 @@ describe Stretcher::Index do
 
   it "should delete by query" do
     seed_corpus
-    index.search(:query => {:match_all => {}}).total == 3
-    index.count(:query => {:match_all => {}}).count == 3
+    index.search(:query => {:match_all => {}}).total.should == 6
+    index.count(:match_all => {})['count'].should == 6
     index.delete_query(:match_all => {})
     index.refresh
-    index.search(:query => {:match_all => {}}).total == 0
+    index.search(:query => {:match_all => {}}).total.should == 0
+    index.count(:match_all => {})['count'].should == 0
   end
 
   it "should search without error" do

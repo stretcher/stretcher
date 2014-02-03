@@ -21,8 +21,8 @@ module Stretcher
     end
 
     def do_count(generic_opts={}, explicit_body=nil)
-      response = do_query_dsl_request(generic_opts, explicit_body, "_count")
-      CountResults.new(response)
+      # Return response hash since we're moving away from Hashie.
+      do_query_dsl_request(generic_opts, explicit_body, "_count")
     end
 
     def do_search(generic_opts={}, explicit_body=nil)

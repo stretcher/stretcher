@@ -14,18 +14,18 @@ module Stretcher
     # Retrieves the document by ID.
     # Normally this returns the contents of _source, however, if the 'raw' flag is passed in, it will return the full response hash.
     # Returns nil if the document does not exist.
-    # 
+    #
     # The :fields argument can either be a csv String or an Array. e.g. [:field1,'field2] or "field1,field2".
     # If the fields parameter is passed in those fields are returned instead of _source.
     #
-    # If, you include _source as a field, along with other fields you MUST set the raw flag to true to 
+    # If, you include _source as a field, along with other fields you MUST set the raw flag to true to
     # receive both fields and _source. Otherwise, only _source will be returned
     def get(id, options={}, raw=false)
       if options == true || options == false # Support raw as second argument, legacy API
         raw = true
         options = {}
       end
-      
+
       res = request(:get, id, options)
       raw ? res : (res["_source"] || res["fields"])
     end
@@ -77,7 +77,7 @@ module Stretcher
     def percolate(document = {})
       request :get, '_percolate', nil, {:doc => document}
     end
-    
+
     # Runs an MLT query based on the document's content.
     # This is actually a search, so a Stretcher::SearchResults object is returned
     #
@@ -123,6 +123,13 @@ module Stretcher
     def search(generic_opts={}, explicit_body=nil)
       # Written this way to be more RDoc friendly
       do_search(generic_opts, explicit_body)
+    end
+
+    # Issues an Index#count scoped to this type
+    # See Index#count for more details
+    def count(generic_opts={}, explicit_body=nil)
+      # Written this way to be more RDoc friendly
+      do_count(generic_opts, explicit_body)
     end
 
     # Full path to this index type
