@@ -45,7 +45,7 @@ module Stretcher
     #
     def documents
       # This function and its helpers are side-effecty for speed
-      @documents ||= raw[:hits][:hits].map do |hit|
+      @documents ||= raw_plain['hits']['hits'].map do |hit|
         doc = extract_source(hit)
         copy_underscores(hit, doc)
         copy_highlight(hit, doc)
@@ -64,10 +64,10 @@ module Stretcher
 
     def extract_source(hit)
       # Memoize the key, since it will be uniform across results
-      @doc_key ||= if hit.key?(:_source)
-                     :_source
-                   elsif hit.key?(:fields)
-                     :fields
+      @doc_key ||= if hit.key?('_source')
+                     '_source'
+                   elsif hit.key?('fields')
+                     'fields'
                    else
                      nil
                    end
@@ -85,7 +85,7 @@ module Stretcher
     end
 
     def copy_highlight(hit, doc)
-      if highlight = hit["highlight"]
+      if highlight = hit['highlight']
         doc[:_highlight] = highlight
       end
       doc
