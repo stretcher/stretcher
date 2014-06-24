@@ -142,7 +142,7 @@ module Stretcher
     #    server.msearch(data)
     def msearch(body=[])
       raise ArgumentError, "msearch takes an array!" unless body.is_a?(Array)
-      fmt_body = body.map {|l| JSON.dump(l) }.join("\n") << "\n"
+      fmt_body = body.map {|l| MultiJson.dump(l) }.join("\n") << "\n"
 
       res = request(:get, path_uri("/_msearch"), {}, fmt_body, {}, :mashify => false)
 

@@ -2,7 +2,7 @@ require 'thread'
 require 'logger'
 require 'hashie'
 require 'excon'
-require 'json'
+require 'multi_json'
 require 'faraday'
 require 'faraday_middleware'
 require "stretcher/version"
