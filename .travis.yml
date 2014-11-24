@@ -1,7 +1,7 @@
 language: ruby
 
-services:
-  - elasticsearch
+before_install:
+  - wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.13.deb && sudo dpkg -i --force-confnew elasticsearch-0.90.13.deb && sudo service elasticsearch start
 
 rvm:
   - 2.0.0

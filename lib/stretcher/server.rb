@@ -6,9 +6,9 @@ module Stretcher
     # Returns a properly configured HTTP client when initializing an instance
     def self.build_client(uri_components, options={})
       http = Faraday.new(:url => uri_components) do |builder|
-        builder.response :multi_json, :content_type => /\bjson$/
+        builder.response :json, :content_type => /\bjson$/
 
-        builder.request :multi_json
+        builder.request :json
 
         builder.options[:timeout] = options[:read_timeout] || 30
         builder.options[:open_timeout] = options[:open_timeout] || 2
