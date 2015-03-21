@@ -46,7 +46,7 @@ Stretcher Strives to provide adequate documentation for all methods. Many method
 * [Stretcher::Server.new.* (Stretcher::Server)](http://rdoc.info/github/stretcher/stretcher/master/Stretcher/Server)
 * [Stretcher::Server.new.index(:foo).* (Stretcher::Index)](http://rdoc.info/github/stretcher/stretcher/master/Stretcher/Index)
 * [Stretcher::Server.new.index(:foo).type(:bar).* (Stretcher::IndexType)](http://rdoc.info/github/stretcher/stretcher/master/Stretcher/IndexType)
-* [Stretcher::Server.new.index(:foo).search (Stretcher::SearchResult)](http://rdoc.info/github/stretcher/stretcher/master/Stretcher/SearchResult)
+* [Stretcher::Server.new.index(:foo).search (Stretcher::SearchResult)](http://rdoc.info/github/stretcher/stretcher/master/Stretcher/SearchResults)
 * [Stretcher::Server.new.index(:foo).alias(:baz).* (Stretcher::Alias)](http://rdoc.info/github/stretcher/stretcher/master/Stretcher/Alias)
 * [Stretcher::Server.new.cluster.* (Stretcher::Cluster)](http://rdoc.info/github/stretcher/stretcher/master/Stretcher/Cluster)
 
