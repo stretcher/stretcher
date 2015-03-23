@@ -41,14 +41,14 @@ gem 'stretcher'
 
 #### RDocs
 
-Stretcher Strives to provide adequate documentation for all methods. Many methods not described in the 'Getting Started' section can be found in the [full rdocs](http://rdoc.info/github/PoseBiz/stretcher/master/frames).
+Stretcher Strives to provide adequate documentation for all methods. Many methods not described in the 'Getting Started' section can be found in the [full rdocs](http://rdoc.info/github/stretcher/stretcher/master/frames).
 
-* [Stretcher::Server.new.* (Stretcher::Server)](http://rdoc.info/github/PoseBiz/stretcher/master/Stretcher/Server)
-* [Stretcher::Server.new.index(:foo).* (Stretcher::Index)](http://rdoc.info/github/PoseBiz/stretcher/master/Stretcher/Index)
-* [Stretcher::Server.new.index(:foo).type(:bar).* (Stretcher::IndexType)](http://rdoc.info/github/PoseBiz/stretcher/master/Stretcher/IndexType)
-* [Stretcher::Server.new.index(:foo).search (Stretcher::SearchResult)](http://rdoc.info/github/PoseBiz/stretcher/master/Stretcher/SearchResult)
-* [Stretcher::Server.new.index(:foo).alias(:baz).* (Stretcher::Alias)](http://rdoc.info/github/PoseBiz/stretcher/master/Stretcher/Alias)
-* [Stretcher::Server.new.cluster.* (Stretcher::Cluster)](http://rdoc.info/github/PoseBiz/stretcher/master/Stretcher/Cluster)
+* [Stretcher::Server.new.* (Stretcher::Server)](http://rdoc.info/github/stretcher/stretcher/master/Stretcher/Server)
+* [Stretcher::Server.new.index(:foo).* (Stretcher::Index)](http://rdoc.info/github/stretcher/stretcher/master/Stretcher/Index)
+* [Stretcher::Server.new.index(:foo).type(:bar).* (Stretcher::IndexType)](http://rdoc.info/github/stretcher/stretcher/master/Stretcher/IndexType)
+* [Stretcher::Server.new.index(:foo).search (Stretcher::SearchResult)](http://rdoc.info/github/stretcher/stretcher/master/Stretcher/SearchResults)
+* [Stretcher::Server.new.index(:foo).alias(:baz).* (Stretcher::Alias)](http://rdoc.info/github/stretcher/stretcher/master/Stretcher/Alias)
+* [Stretcher::Server.new.cluster.* (Stretcher::Cluster)](http://rdoc.info/github/stretcher/stretcher/master/Stretcher/Cluster)
 
 ### Basic Usage
 
