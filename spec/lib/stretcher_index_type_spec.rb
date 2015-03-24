@@ -54,6 +54,35 @@ describe Stretcher::IndexType do
     end
   end
 
+  describe "counting" do
+
+    def put_n(n, doc)
+      (1..n).each do
+        type.post(@doc)
+      end
+      index.refresh
+    end
+
+    before do
+      @doc = {:message => "count"}
+    end
+
+    it "should count 0 documents" do
+      type.count(:match => {:message => @doc[:message]})['count'].should == 0;
+    end
+
+    it "should count 1 document" do
+      put_n(1, @doc)
+      type.count(:match => {:message => @doc[:message]})['count'].should == 1
+    end
+
+    it "should count 5 document" do
+      put_n(5, @doc)
+      type.count(:match => {:message => @doc[:message]})['count'].should == 5
+    end
+
+  end
+
   describe "document based mlt_searches" do
     let(:doc_one) {{message: "I just saw Death Wish I with charles bronson!", :_timestamp => 1366420402}}
     let(:doc_two) {{message: "Death Wish II was even better!", :_timestamp => 1366420403}}
@@ -69,11 +98,11 @@ describe Stretcher::IndexType do
     let (:results) {
       type.mlt(1, min_term_freq: 1, min_doc_freq: 1, fields: [:message])
     }
-    
+
     it "should return results as SearchResults" do
       results.should be_a(Stretcher::SearchResults)
     end
-    
+
     it "should return expected mlt results" do
       Set.new(results.docs.map(&:_id)).should == Set.new(["2", "3"])
     end
@@ -106,7 +135,7 @@ describe Stretcher::IndexType do
       @doc = {:message => "hello!", :_timestamp => 1366420401}
       @put_res = type.put(987, @doc)
     end
-    
+
     describe "put" do
       it "should put correctly, with options" do
         type.put(987, @doc, :version_type => :external, :version => 42)._version.should == 42
@@ -158,7 +187,7 @@ describe Stretcher::IndexType do
         res["_source"].message.should == @doc[:message]
       end
     end
-    
+
     describe 'explain' do
       it "should explain a query" do
         type.exists?(987).should be_true
@@ -172,7 +201,7 @@ describe Stretcher::IndexType do
         type.explain(987, {:query => {:match_all => {}}}, {:fields => 'message'}).get.fields.message.should == 'hello!'
       end
     end
-    
+
     it "should update individual docs correctly using ctx.source" do
       type.update(987, :script => "ctx._source.message = 'Updated!'")
       type.get(987).message.should == 'Updated!'
@@ -185,7 +214,7 @@ describe Stretcher::IndexType do
 
     it "should update individual docs correctly using doc and fields" do
       response =  type.update(987, {:doc => {:message => 'Updated!'}}, :fields => 'message')
-      response.get.fields.message.should == 'Updated!'      
+      response.get.fields.message.should == 'Updated!'
     end
 
     it "should delete by query correctly" do

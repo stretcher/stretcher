@@ -23,7 +23,7 @@ describe Stretcher::Index do
   end
 
   def create_user_mapping
-    mdata = {:user => {:properties => {:username => {:type => :string}, 
+    mdata = {:user => {:properties => {:username => {:type => :string},
                                        :age => {:type => :integer}}}}
     index.type(:user).put_mapping(mdata)
   end
@@ -120,7 +120,7 @@ describe Stretcher::Index do
       index.refresh
       res = index.mget(docs_meta).length.should == 0
     end
-    
+
     it 'allows _routing to be set on bulk index documents' do
       server.index(:with_routing).delete if server.index(:with_routing).exists?
       server.index(:with_routing).create({
@@ -152,21 +152,23 @@ describe Stretcher::Index do
     it "should correctly format the suggest request" do
       expected = {
         "sug-alias" => {
-          :text => "prefix", 
+          :text => "prefix",
           :completion => {:field => "sug-field"}}}
       index.
         should_receive(:request).
         with(:post, "_suggest", nil, expected).once.and_return(:result)
-      index.suggest("sug-alias", "prefix", field: "sug-field").should == :result      
+      index.suggest("sug-alias", "prefix", field: "sug-field").should == :result
     end
   end
 
   it "should delete by query" do
     seed_corpus
-    index.search(:query => {:match_all => {}}).total == 3
+    index.search(:query => {:match_all => {}}).total.should == 6
+    index.count(:match_all => {})['count'].should == 6
     index.delete_query(:match_all => {})
     index.refresh
-    index.search(:query => {:match_all => {}}).total == 0
+    index.search(:query => {:match_all => {}}).total.should == 0
+    index.count(:match_all => {})['count'].should == 0
   end
 
   it "should search without error" do
@@ -188,7 +190,7 @@ describe Stretcher::Index do
                 ]
       index.msearch(queries)
     }
-    
+
     it "should return an array of Stretcher::SearchResults" do
       res.length.should == 2
       res[0].class.should == Stretcher::SearchResults

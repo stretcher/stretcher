@@ -51,7 +51,7 @@ module Stretcher
 
     def bulk_action(action, documents, options={})
       action=action.to_sym
-      
+
       body = documents.reduce("") {|post_data, d_raw|
         d = Hashie::Mash.new(d_raw)
         index_meta = { :_id => (d[:id] || d.delete(:_id)) }
@@ -128,6 +128,17 @@ module Stretcher
     # Issues a search with the given query opts and body, both should be hashes
     #
     #    res = server.index('foo').search(size: 12, {query: {match_all: {}}})
+    #    es.class   # Stretcher::CountResults
+    #    res.count # => 1
+    #    res.raw     # => #<Hashie::Mash ...> Raw JSON from the search
+    def count(generic_opts={}, explicit_body=nil)
+      # Written this way to be more RDoc friendly
+      do_count(generic_opts, explicit_body)
+    end
+
+    # Issues a search with the given query opts and body, both should be hashes
+    #
+    #    res = server.index('foo').search(size: 12, {query: {match_all: {}}})
     #    es.class   # Stretcher::SearchResults
     #    res.total   # => 1
     #    res.facets  # => nil
@@ -186,20 +197,20 @@ module Stretcher
     def delete_percolator_query(query_name)
       server.request(:delete, percolator_query_path(query_name))
     end
-    
+
     # Perform a raw bulk operation. You probably want to use Stretcher::Index#bulk_index
     # which properly formats a bulk index request.
     def bulk(data, options={})
       request(:post, "_bulk", options, data)
     end
-    
+
     # Takes the name, text, and completion options to craft a completion query.
     # suggest("band_complete", "a", field: :suggest)
     # Use the new completion suggest API per http://www.elasticsearch.org/guide/reference/api/search/completion-suggest/
     def suggest(name, text, completion={})
       request(:post, "_suggest", nil, {name => {:text => text, :completion => completion}})
     end
-    
+
     # Full path to this index
     def path_uri(path="/")
       p = @server.path_uri("/#{name}")
