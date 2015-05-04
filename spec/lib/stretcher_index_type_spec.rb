@@ -7,15 +7,16 @@ describe Stretcher::IndexType do
 
   it "should be existentially aware" do
     t = index.type(:existential)
-    t.exists?.should be_false
+    t.exists?.should eq(false)
     mapping = {"existential" => {"properties" => {"message" => {"type" => "string"}}}}
     t.put_mapping mapping
-    t.exists?.should be_true
-    t.get_mapping.should == mapping
+    t.exists?.should == true
+    t.get_mapping["foo"]["mappings"].should == mapping
   end
 
   before do
     type.delete_query(:match_all => {})
+
     index.refresh
     type.put_mapping({"bar" => {
                          "properties" => {
@@ -39,7 +40,7 @@ describe Stretcher::IndexType do
 
     it "should build results when _source is not included in loaded fields" do
       res = type.search(:query => {:match_all => {}}, :fields => ['message'])
-      res.results.first.message.should == @doc[:message]
+      res.results.first.message.should == [@doc[:message]]
     end
 
     it "should build results when no document fields are selected" do
@@ -96,8 +97,8 @@ describe Stretcher::IndexType do
 
     it 'allows options to be passed through' do
       response = type.mget([988, 989], :fields => 'message')
-      response.docs.first.fields.message.should == 'message one!'
-      response.docs.last.fields.message.should == 'message two!'
+      response.docs.first.fields.message.should == ['message one!']
+      response.docs.last.fields.message.should == ['message two!']
     end
   end
 
@@ -161,7 +162,7 @@ describe Stretcher::IndexType do
     
     describe 'explain' do
       it "should explain a query" do
-        type.exists?(987).should be_true
+        type.exists?(987).should eq(true)
         index.refresh
         res = type.explain(987, {:query => {:match_all => {}}})
         res.should have_key('explanation')
@@ -169,13 +170,15 @@ describe Stretcher::IndexType do
 
       it 'should allow options to be passed through' do
         index.refresh
-        type.explain(987, {:query => {:match_all => {}}}, {:fields => 'message'}).get.fields.message.should == 'hello!'
+        type.explain(987, {:query => {:match_all => {}}}, {:fields => 'message'}).get.fields.message.should == ['hello!']
       end
     end
     
     it "should update individual docs correctly using ctx.source" do
-      type.update(987, :script => "ctx._source.message = 'Updated!'")
-      type.get(987).message.should == 'Updated!'
+      pending "figure out how we want to handle turning groovy on (maybe use mustache?)"
+      true.should == false
+      #type.update(987, :script => "ctx._source.message = 'Updated!'")
+      #type.get(987).message.should == 'Updated!'
     end
 
     it "should update individual docs correctly using doc" do
@@ -185,36 +188,38 @@ describe Stretcher::IndexType do
 
     it "should update individual docs correctly using doc and fields" do
       response =  type.update(987, {:doc => {:message => 'Updated!'}}, :fields => 'message')
-      response.get.fields.message.should == 'Updated!'      
+      response.get.fields.message.should == ['Updated!']
     end
 
     it "should delete by query correctly" do
       type.delete_query("match_all" => {})
       index.refresh
-      type.exists?(987).should be_false
+      type.exists?(987).should == false
     end
 
     it "should delete individual docs correctly" do
-      type.exists?(987).should be_true
+      type.exists?(987).should == true
       type.delete(987)
-      type.exists?(987).should be_false
+      type.exists?(987).should == false
     end
 
     it "should allow params to be passed to delete" do
       version = type.get(987, {},  true)._version
       lambda { type.delete(987, :version => version + 1) }.should raise_exception
       type.delete(987, :version => version)
-      type.exists?(987).should be_false
+      type.exists?(987).should == false
     end
   end
 
   describe 'percolate' do
     before do
-      index.register_percolator_query('bar', {:query => {:term => {:baz => 'qux'}}}).ok
+      #index.register_percolator_query('bar', {:query => {:term => {:baz => 'qux'}}}).ok
     end
 
     it 'returns matching percolated queries based on the document' do
-      type.percolate({:baz => 'qux'}).matches.should == ['bar']
+      pending "Fix me"
+      true.should == false
+      #type.percolate({:baz => 'qux'}).matches.should == ['bar']
     end
   end
 end

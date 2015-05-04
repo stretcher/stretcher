@@ -1,13 +1,20 @@
+require 'bundler/setup'
 require 'coveralls'
 Coveralls.wear!
 
 require 'rspec'
 require 'stretcher'
+require 'its'
+require 'pry'
 
 File.open("test_logs", 'wb') {|f| f.write("")}
 DEBUG_LOGGER = Logger.new('test_logs')
 ES_URL = 'http://localhost:9200'
 require File.expand_path(File.join(File.dirname(__FILE__), %w[.. lib stretcher]))
+
+RSpec.configure do |config|
+  config.expect_with(:rspec) { |c| c.syntax = [:should, :expect] }
+end
 
 def ensure_test_index(server, name)
   i = server.index(name)

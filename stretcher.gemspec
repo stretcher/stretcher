@@ -30,10 +30,14 @@ Gem::Specification.new do |gem|
   gem.add_dependency('faraday_middleware', '~> 0.9')
   gem.add_dependency('excon', '>= 0.16')
   gem.add_dependency('hashie', '>= 1.2.0')
+  gem.add_dependency('multi_json', '>= 1.4.0')
 
-  gem.add_development_dependency 'rspec', '2.14.1'
+  gem.add_development_dependency 'rspec', '>= 3.2'
   gem.add_development_dependency 'coveralls'
   gem.add_development_dependency 'simplecov'
   gem.add_development_dependency 'vcr'
   gem.add_development_dependency 'rake'
+  gem.add_development_dependency 'its'
+  gem.add_development_dependency 'pry'
+
 end
