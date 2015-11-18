@@ -1,5 +1,7 @@
 # Stretcher
 
+## This project needs a new maintainer! Please contact @andrewvc if you'd like to take over!
+
 [![Gem Version](https://badge.fury.io/rb/stretcher.png)](http://badge.fury.io/rb/stretcher)
 [![Build Status](https://travis-ci.org/PoseBiz/stretcher.png?branch=master)](https://travis-ci.org/PoseBiz/stretcher)
 [![Code Climate](https://codeclimate.com/github/PoseBiz/stretcher.png)](https://codeclimate.com/github/PoseBiz/stretcher)
