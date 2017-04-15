@@ -27,8 +27,8 @@ module Stretcher
     def create(options = {})
       request(:put) do |req|
         req.body = {
-          actions: [
-            add: options.merge(:alias => @name)
+          :actions => [
+            :add => options.merge(:alias => @name)
           ]
         }
       end
