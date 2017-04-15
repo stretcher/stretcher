@@ -84,6 +84,7 @@ module Stretcher
       @http_threadsafe = !!options[:http_threadsafe]
       @request_mtx = Mutex.new unless @http_threadsafe
       @uri = uri.to_s
+      @uri = uri.sample.to_s if uri.is_a? Array
       @uri_components = URI.parse(@uri)
       @http = self.class.build_client(@uri_components, options)
       @logger = self.class.build_logger(options)
