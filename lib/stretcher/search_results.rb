@@ -35,6 +35,12 @@ module Stretcher
       @facets ||= raw[:facets]
     end
 
+    # Returns the aggregations data from elasticsearch
+    def aggs
+      @aggs ||= raw[:aggregations]
+    end
+    alias_method :aggregations, :aggs
+
     # Returns a 'prettier' version of elasticsearch results
     # Also aliased as +docs+
     # This will:
