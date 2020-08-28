@@ -21,7 +21,7 @@ module Stretcher
 
     # Returns a Hashie::Mash version of the raw response
     def raw
-      @raw ||= Hashie::Mash.new(@raw_plain)
+      @raw ||= Smash.new(@raw_plain)
     end
 
     # Returns the total number of results
@@ -52,6 +52,7 @@ module Stretcher
         doc
       end
     end
+
     alias_method :docs, :documents
 
     # DEPRECATED!
@@ -72,12 +73,12 @@ module Stretcher
                      nil
                    end
 
-      Hashie::Mash.new(@doc_key ? hit[@doc_key] : Hashie::Mash.new)
+      Smash.new(@doc_key ? hit[@doc_key] : Smash.new)
     end
 
     def copy_underscores(hit, doc)
       # Copy underscore keys into the document
-      hit.each do |k,v|
+      hit.each do |k, v|
         doc[k] = v if k && k[0] == "_"
       end
 

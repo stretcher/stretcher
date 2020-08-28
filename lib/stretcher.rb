@@ -11,10 +11,11 @@ require 'stretcher/search_results'
 require 'stretcher/es_component'
 require 'stretcher/server'
 require 'stretcher/index'
-require 'stretcher/index_type'
+require 'stretcher/index_docs'
 require 'stretcher/alias'
 require 'stretcher/cluster'
 require 'stretcher/util'
+require 'stretcher/smash'
 
 module Stretcher
 end

@@ -22,18 +22,14 @@ Gem::Specification.new do |gem|
     gem.add_runtime_dependency('jruby-openssl')
   end
 
-  if RUBY_VERSION < "1.9"
-    gem.add_runtime_dependency('json')
-  end
+  gem.add_dependency('faraday', '~> 1.0.1')
+  gem.add_dependency('faraday_middleware', '~> 1.0.0')
+  gem.add_dependency('excon', '>= 0.76.0')
+  gem.add_dependency('hashie', '>= 4.1.0')
+  gem.add_dependency('multi_json', '>= 1.15.0')
 
-  gem.add_dependency('faraday', '~> 0.8')
-  gem.add_dependency('faraday_middleware', '~> 0.9')
-  gem.add_dependency('excon', '>= 0.16')
-  gem.add_dependency('hashie', '>= 2.1.0')
-  gem.add_dependency('multi_json', '>= 1.4.0')
-
-  gem.add_development_dependency 'rspec', '>= 3.2'
-  gem.add_development_dependency 'coveralls'
+  gem.add_development_dependency 'rspec', '>= 3.9'
+  gem.add_development_dependency 'coveralls', '>= 0.8.23'
   gem.add_development_dependency 'simplecov'
   gem.add_development_dependency 'vcr'
   gem.add_development_dependency 'rake'

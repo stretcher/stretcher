@@ -5,7 +5,7 @@ module Stretcher
     # Many of the methods marked protected are called by one line shims in subclasses. This is mostly to facilitate
     # better looking rdocs
 
-    def do_search(generic_opts={}, explicit_body=nil)
+    def do_search(generic_opts = {}, explicit_body = nil)
       query_opts = {}
       body = nil
       if explicit_body
@@ -15,7 +15,7 @@ module Stretcher
         body = generic_opts
       end
 
-      response = request(:get, "_search", query_opts, nil, {}, :mashify => false) do |req|
+      response = request(:get, "_search", query_opts, nil, {}, mashify: false) do |req|
         req.body = body
       end
       SearchResults.new(response)
@@ -25,14 +25,14 @@ module Stretcher
       request(:post, "_refresh")
     end
 
-    def request(method, path=nil, params={}, body=nil, headers={}, options={}, &block)
+    def request(method, path = nil, params = {}, body = nil, headers = {}, options = {}, &block)
       prefixed_path = path_uri(path)
       raise "Cannot issue request, no server specified!" unless @server
       @server.request(method, prefixed_path, params, body, headers, options, &block)
     end
 
-    def do_delete_query(query)
-      request :delete, '_query' do |req|
+    def do_delete_query(query, params = {})
+      request :post, '_delete_by_query', params do |req|
         req.body = {query: query}
       end
     end

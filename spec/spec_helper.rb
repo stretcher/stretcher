@@ -1,6 +1,8 @@
 require 'bundler/setup'
 require 'coveralls'
 Coveralls.wear!
+require 'simplecov'
+SimpleCov.start
 
 require 'rspec'
 require 'stretcher'
@@ -16,19 +18,26 @@ RSpec.configure do |config|
   config.expect_with(:rspec) { |c| c.syntax = [:should, :expect] }
 end
 
-def ensure_test_index(server, name)
+def ensure_test_index(server, name, mappings=nil)
   i = server.index(name)
   begin
     i.delete
   rescue Stretcher::RequestError::NotFound
   end
   server.refresh
-  i.create({
-             :settings => {
-               :number_of_shards => 1,
-               :number_of_replicas => 0
-             }
-           })
+
+  settings = {
+      settings: {
+          number_of_shards: 1,
+          number_of_replicas: 0
+      }
+  }
+
+  if mappings
+    settings.merge!(mappings)
+  end
+
+  i.create(settings)
   # Why do both? Doesn't hurt, and it fixes some races
   server.refresh
   i.refresh

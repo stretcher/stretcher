@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Stretcher::Server do
   let(:server) do
-    server = Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER)
+    server = Stretcher::Server.new(ES_URL, logger: DEBUG_LOGGER)
     i = server.index('foo')
     i.delete rescue Stretcher::RequestError::NotFound
     i.create
@@ -14,12 +14,12 @@ describe Stretcher::Server do
   end
 
   it 'sets log level from options' do
-    server = Stretcher::Server.new(ES_URL, :log_level => :info)
+    server = Stretcher::Server.new(ES_URL, log_level: :info)
     server.logger.level.should == Logger::INFO
   end
   
   it 'sets timeouts from options' do
-    server = Stretcher::Server.new(ES_URL, :read_timeout => 5, :open_timeout => 2)
+    server = Stretcher::Server.new(ES_URL, read_timeout: 5, open_timeout: 2)
     server.http.options[:timeout].should == 5
     server.http.options[:open_timeout].should == 2
   end
@@ -42,12 +42,12 @@ describe Stretcher::Server do
       builder.adapter :net_http
       conf_called = true
     }
-    srv = Stretcher::Server.new(ES_URL, {:faraday_configurator => configurator})
-    conf_called.should be_true
+    srv = Stretcher::Server.new(ES_URL, {faraday_configurator: configurator})
+    conf_called.should eql true
   end
 
   it "should properly return that our server is up" do
-    server.up?.should be_true
+    server.up?.should eql true
   end
 
   it "should check the stats w/o error" do
@@ -57,7 +57,7 @@ describe Stretcher::Server do
   it "should perform alias operations properly" do
     server.index(:foo).delete if server.index(:foo).exists?
     server.index(:foo).create
-    server.aliases(:actions => [{:add => {:index => :foo, :alias => :foo_alias}}])
+    server.aliases(actions: [{add: {index: :foo, alias: :foo_alias}}])
 
     server.index(:foo_alias).get_settings.should == server.index(:foo).get_settings
 
@@ -65,11 +65,11 @@ describe Stretcher::Server do
   end
 
   it "should check the status w/o error" do
-    server.status.ok.should be_true
+    server.status.indices.should be
   end
 
   it "should refresh w/o error" do
-    server.refresh.ok.should be_true
+    server.refresh._shards.failed.should eql 0
   end
 
   it "should beget an index object cleanly" do
@@ -87,15 +87,15 @@ describe Stretcher::Server do
   end
 
   it "execute the analysis API and return an expected result" do
-    analyzed = server.analyze("Candles", :analyzer => :snowball)
+    analyzed = server.analyze("Candles", analyzer: :snowball)
     analyzed.tokens.first.token.should == 'candl'
   end
 
   it 'logs requests correctly' do
     server.logger.should_receive(:debug) do |&block|
-      block.call.should == %{curl -XGET 'http://localhost:9200/_analyze?analyzer=snowball' -d 'Candles' '-H Accept: application/json' '-H Content-Type: application/json' '-H User-Agent: Stretcher Ruby Gem #{Stretcher::VERSION}'}
+      block.call.should == %{curl -XGET 'http://localhost:9200/_analyze' -d '{"text":"Candles","analyzer":"snowball"}' '-H Accept: application/json' '-H Content-Type: application/json' '-H User-Agent: Stretcher Ruby Gem #{Stretcher::VERSION}'}
     end
-    server.analyze("Candles", :analyzer => :snowball)
+    server.analyze("Candles", analyzer: :snowball)
   end
 
   describe ".path_uri" do
@@ -110,8 +110,10 @@ describe Stretcher::Server do
     end
 
     context "server lives in a subdirectory" do
-      subject { Stretcher::Server.new("http://example.com/mysubdir/").path_uri("/foo") }      
-      it { should eq ("http://example.com/mysubdir/foo") }
+      subject { Stretcher::Server.new("http://example.com/mysubdir/").path_uri("/foo") }
+      it {
+        should eq ("http://example.com/mysubdir/foo")
+      }
     end
   end
 
@@ -144,7 +146,7 @@ describe Stretcher::Server do
     end
 
     it "should return a hash of the aliases if at least one exists" do
-      server.aliases(:actions => [{ :add => { :index => "foo", :alias => "bar" }}])
+      server.aliases(actions: [{ add: { index: "foo", alias: "bar" }}])
       expect(server.get_alias("bar")).to eq({"foo" => {"aliases" => {"bar" => {}}}})
     end
   end

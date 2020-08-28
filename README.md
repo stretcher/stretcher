@@ -1,9 +1,8 @@
 # Stretcher
+[![Build Status](https://travis-ci.org/ldcorg/stretcher.svg?branch=master)](https://travis-ci.org/ldcorg/stretcher)
+[![Coverage Status](https://coveralls.io/repos/github/ldcorg/stretcher/badge.svg?branch=master)](https://coveralls.io/github/ldcorg/stretcher?branch=master)
 
-[![Gem Version](https://badge.fury.io/rb/stretcher.png)](http://badge.fury.io/rb/stretcher)
-[![Build Status](https://travis-ci.org/PoseBiz/stretcher.png?branch=master)](https://travis-ci.org/PoseBiz/stretcher)
-[![Code Climate](https://codeclimate.com/github/PoseBiz/stretcher.png)](https://codeclimate.com/github/PoseBiz/stretcher)
-[![Coverage Status](https://coveralls.io/repos/PoseBiz/stretcher/badge.png)](https://coveralls.io/r/PoseBiz/stretcher)
+Tested against: Elasticsearch 7.8
 
 A concise, fast ElasticSearch Ruby client designed to reflect the actual elastic search API as closely as possible. Elastic search's API is complex, and mostly documented on the Elastic Search Guide. This client tries to stay out of your way more than others making advanced techniques easier to implement, and making debugging Elastic Search's sometimes cryptic errors easier. Stretcher is currently in production use by Pose, Get Satisfaction, Reverb, and many others.
 
@@ -17,7 +16,7 @@ A concise, fast ElasticSearch Ruby client designed to reflect the actual elastic
 * Logs curl commandline statements in debug mode
 * Pure, threadsafe, ruby
 * Easily swap HTTP clients via Faraday
-* Tested against Ruby 2.0,1.9, Jruby, and Rubinius
+* Tested against Ruby 2.6.0
 * [Semantically versioned](http://semver.org/)
 
 ## Installation
@@ -25,30 +24,10 @@ A concise, fast ElasticSearch Ruby client designed to reflect the actual elastic
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'stretcher'
+gem 'stretcher', git: 'https://github.com/ldcorg/stretcher'
 ```
 
 ## Usage
-
-#### Getting Started
-
-1. [Basic Usage](https://github.com/PoseBiz/stretcher#basic-usage)
-1. [Multi Search](https://github.com/PoseBiz/stretcher#multi-search)
-1. [Bulk Indexing](https://github.com/PoseBiz/stretcher#bulk-indexing)
-1. [Percolate](https://github.com/PoseBiz/stretcher#percolate)
-1. [Logging](https://github.com/PoseBiz/stretcher#logging)
-1. [Rails Integration](https://github.com/PoseBiz/stretcher#rails-integration)
-
-#### RDocs
-
-Stretcher Strives to provide adequate documentation for all methods. Many methods not described in the 'Getting Started' section can be found in the [full rdocs](http://rdoc.info/github/stretcher/stretcher/master/frames).
-
-* [Stretcher::Server.new.* (Stretcher::Server)](http://rdoc.info/github/stretcher/stretcher/master/Stretcher/Server)
-* [Stretcher::Server.new.index(:foo).* (Stretcher::Index)](http://rdoc.info/github/stretcher/stretcher/master/Stretcher/Index)
-* [Stretcher::Server.new.index(:foo).type(:bar).* (Stretcher::IndexType)](http://rdoc.info/github/stretcher/stretcher/master/Stretcher/IndexType)
-* [Stretcher::Server.new.index(:foo).search (Stretcher::SearchResult)](http://rdoc.info/github/stretcher/stretcher/master/Stretcher/SearchResults)
-* [Stretcher::Server.new.index(:foo).alias(:baz).* (Stretcher::Alias)](http://rdoc.info/github/stretcher/stretcher/master/Stretcher/Alias)
-* [Stretcher::Server.new.cluster.* (Stretcher::Cluster)](http://rdoc.info/github/stretcher/stretcher/master/Stretcher/Cluster)
 
 ### Basic Usage
 
@@ -58,11 +37,11 @@ server = Stretcher::Server.new('http://localhost:9200')
 # Delete an index (in case you already have this one)
 server.index(:foo).delete rescue nil
 # Create an index
-server.index(:foo).create(mappings: {tweet: {properties: {text: {type: 'string'}}}})
+server.index(:foo).create(mappings: {tweet: {properties: {text: {type: 'text'}}}})
 # Add some documents
-30.times {|t| server.index(:foo).type(:tweet).put(t, {text: "Hello #{t}"}) }
+30.times {|t| server.index(:foo).docs.put(t, {text: "Hello #{t}"}) }
 # Retrieve a document
-server.index(:foo).type(:tweet).get(3)
+server.index(:foo).docs.get(3)
 # => #<Hashie::Mash text="Hello 3">
 # Perform a search (Returns a Stretcher::SearchResults instance)
 res = server.index(:foo).search(size: 12, query: {match_all: {}})
@@ -87,7 +66,7 @@ server.cluster.health # Hashie::Mash
 # with_server takes the same args as #new, but is amenable to blocks
 Stretcher::Server.with_server('http://localhost:9200') {|srv|
   srv.index(:foo) {|idx|
-    idx.type(:tweet) {|t| {exists: t.exists?, mapping: t.get_mapping} }
+    idx.docs {|t| {exists: t.exists?('123'), mapping: idx.get_mapping} }
   }
 }
 # => {:exists=>true, :mapping=>#<Hashie::Mash tweet=...>}
@@ -109,19 +88,6 @@ server.msearch([{index: :foo}, {query: {match_all: {}}}])
 ```ruby
 docs = [{"_type" => "tweet", "_id" => 91011, "text" => "Bulked"}]
 server.index(:foo).bulk_index(docs)
-```
-
-### Percolate
-
-Implements the ElasticSearch [Percolate API](http://www.elasticsearch.org/guide/reference/api/percolate/)
-
-```ruby
-# Register a new percolate query
-server.index(:foo).register_percolator_query(query_name, query_hash)
-# Check a document against an index, returns an array of query matches
-server.index(:foo).type(:foo1).percolate(doc)
-# Delete a percolate query
-server.index(:foo).delete_percolator_query(query_name)
 ```
 
 ### Logging
@@ -165,6 +131,7 @@ Email or tweet @andrewvc if you'd like to be added to this list!
 * [@alpinegizmo](https://github.com/alpinegizmo)
 * [@mcolyer](https://github.com/mcolyer)
 * [@mulderp](https://github.com/mulderp)
+* [@pcstout](https://github.com/pcstout)
 
 ## Contributing
 

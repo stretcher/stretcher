@@ -1,10 +1,13 @@
 language: ruby
 
 before_install:
-  - wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.13.deb && sudo dpkg -i --force-confnew elasticsearch-0.90.13.deb && sudo service elasticsearch start
+  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.8.1-amd64.deb
+  - sudo dpkg -i --force-confnew elasticsearch-7.8.1-amd64.deb
+  - sudo sed -i.old 's/-Xms1g/-Xms128m/' /etc/elasticsearch/jvm.options
+  - sudo sed -i.old 's/-Xmx1g/-Xmx128m/' /etc/elasticsearch/jvm.options
+  - echo -e '-XX:+DisableExplicitGC\n-Djdk.io.permissionsUseCanonicalPath=true\n-Dlog4j.skipJansi=true\n-server\n' | sudo tee -a /etc/elasticsearch/jvm.options
+  - sudo chown -R elasticsearch:elasticsearch /etc/default/elasticsearch
+  - sudo systemctl start elasticsearch
 
 rvm:
-  - 2.0.0
-  - 1.9.3
-  - jruby-19mode
-#  - rbx-2.1.1
+  - 2.6.0

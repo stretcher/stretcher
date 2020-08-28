@@ -2,12 +2,12 @@ require 'spec_helper'
 
 describe Stretcher::SearchResults do
   let(:server) {
-    Stretcher::Server.new(ES_URL, :logger => DEBUG_LOGGER)
+    Stretcher::Server.new(ES_URL, logger: DEBUG_LOGGER)
   }
   let(:index) { ensure_test_index(server, :foo) }
 
   let(:result) do
-    Hashie::Mash.new({
+    Stretcher::Smash.new({
                        'facets' => [],
                        'hits' => {
                          'total' => 1,
@@ -22,7 +22,7 @@ describe Stretcher::SearchResults do
   end
 
   let(:result_with_hightlight) do
-    Hashie::Mash.new({
+    Stretcher::Smash.new({
                        'facets' => [],
                        'hits' => {
                          'total' => 1,
@@ -62,7 +62,7 @@ describe Stretcher::SearchResults do
   context 'result object types' do
     let(:search_result) {
       sleep 2 rescue nil # Delay a little bit to see what's up with Travis CI
-      index.search(:query => {:match_all => {}})
+      index.search(query: {match_all: {}})
     }
 
     it 'returns a plain hash for raw_plain' do
@@ -72,7 +72,7 @@ describe Stretcher::SearchResults do
 
     it 'returns a hashie mash for raw' do
       sleep 1
-      search_result.raw.should be_instance_of(Hashie::Mash)
+      search_result.raw.should be_instance_of(Stretcher::Smash)
     end
   end
 end

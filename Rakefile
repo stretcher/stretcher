@@ -5,4 +5,4 @@ RSpec::Core::RakeTask.new(:spec) do |t|
   ENV['COVERAGE'] = "1"
   t.rspec_opts = ['--color']
 end
-task :default => :spec
+task default: :spec

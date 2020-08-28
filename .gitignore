@@ -19,3 +19,5 @@ tmp
 .\#*#
 .#*
 test_logs
+.idea
+.ruby-version
